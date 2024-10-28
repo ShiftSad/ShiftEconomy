@@ -2,7 +2,6 @@ package codes.shiftmc.shiftEconomy.configuration;
 
 
 import codes.shiftmc.common.model.enums.CachingMethod;
-import lombok.AllArgsConstructor;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.configuration.serialization.SerializableAs;
 import org.jetbrains.annotations.NotNull;
@@ -11,14 +10,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 @SerializableAs("CacheSource")
-@AllArgsConstructor
-public class CacheSource implements ConfigurationSerializable {
-
-    private final CachingMethod cachingMethod;
-
-    private final String address;
-    private final int port;
-    private final String password;
+public record CacheSource(CachingMethod cachingMethod, String address, int port,
+                          String password) implements ConfigurationSerializable {
 
     @Override
     public @NotNull Map<String, Object> serialize() {

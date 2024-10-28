@@ -1,7 +1,6 @@
 package codes.shiftmc.shiftEconomy.configuration;
 
 import codes.shiftmc.common.model.enums.StorageMethod;
-import lombok.AllArgsConstructor;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.configuration.serialization.SerializableAs;
 import org.jetbrains.annotations.NotNull;
@@ -10,17 +9,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 @SerializableAs("DataSource")
-@AllArgsConstructor
-public class DataSource implements ConfigurationSerializable {
-
-    private final StorageMethod storageMethod;
-
-    private final String address;
-    private final String database;
-    private final String username;
-    private final String password;
-
-    private final String mongodbConnectionUri;
+public record DataSource(StorageMethod storageMethod, String address, String database, String username, String password,
+                         String mongodbConnectionUri) implements ConfigurationSerializable {
 
     @Override
     public @NotNull Map<String, Object> serialize() {
