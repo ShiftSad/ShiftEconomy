@@ -14,6 +14,7 @@ import java.util.UUID;
 public class UserService {
 
     private static final String USER_CACHE_KEY_PREFIX = "user:";
+    private static final long CACHE_EXPIRATION_TIME = 3600; // 1 hour in seconds
 
     private final UserRepository userRepository;
     private final TypeCache<UserData> cache;
@@ -32,9 +33,8 @@ public class UserService {
         if (cache != null)
             return cache.get(cacheKey(uuid))
                 .switchIfEmpty(userRepository.findByUuid(uuid)
-                        .flatMap(user -> cache.set(cacheKey(uuid), user)));
+                        .flatMap(user -> cache.set(cacheKey(uuid), user, CACHE_EXPIRATION_TIME)));
         else return userRepository.findByUuid(uuid);
-
     }
 
     /**
@@ -46,7 +46,7 @@ public class UserService {
     public Mono<UserData> findByUsername(String username) {
         return userRepository.findByUsername(username)
                 .flatMap(user -> {
-                    if (cache != null) return cache.set(cacheKey(user.getUuid()), user).thenReturn(user);
+                    if (cache != null) return cache.set(cacheKey(user.getUuid()), user, CACHE_EXPIRATION_TIME).thenReturn(user);
                     else return Mono.just(user);
                 });
     }
@@ -60,7 +60,7 @@ public class UserService {
     public Mono<UserData> save(UserData userData) {
         return userRepository.save(userData)
                 .flatMap(user -> {
-                    if (cache != null) return cache.set(cacheKey(user.getUuid()), user).thenReturn(user);
+                    if (cache != null) return cache.set(cacheKey(user.getUuid()), user, CACHE_EXPIRATION_TIME).thenReturn(user);
                     else return Mono.just(user);
                 });
     }
@@ -75,7 +75,7 @@ public class UserService {
     public Mono<UserData> updateBalance(UUID uuid, double newBalance) {
         return userRepository.updateBalance(uuid, newBalance)
                 .flatMap(user -> {
-                    if (cache != null) return cache.set(cacheKey(user.getUuid()), user).thenReturn(user);
+                    if (cache != null) return cache.set(cacheKey(user.getUuid()), user, CACHE_EXPIRATION_TIME).thenReturn(user);
                     else return Mono.just(user);
                 });
     }

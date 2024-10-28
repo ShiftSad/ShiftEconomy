@@ -19,5 +19,5 @@ public interface TypeCache<T> {
      * @param value The object to save.
      * @return A Mono emitting the saved object.
      */
-    Mono<T> set(String key, T value);
+    Mono<T> set(String key, T value, long expirationTime);
 }

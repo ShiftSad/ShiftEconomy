@@ -17,7 +17,7 @@ public class RedisTypeCache<T> implements TypeCache<T> {
     }
 
     @Override
-    public Mono<T> set(String key, T value) {
-        return redisCommands.set(key, value).thenReturn(value);
+    public Mono<T> set(String key, T value, long expirationTime) {
+        return redisCommands.setex(key, expirationTime, value).thenReturn(value);
     }
 }
