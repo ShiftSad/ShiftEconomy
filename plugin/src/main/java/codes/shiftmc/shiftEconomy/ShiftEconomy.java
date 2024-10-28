@@ -1,14 +1,20 @@
 package codes.shiftmc.shiftEconomy;
 
+import codes.shiftmc.common.cache.RedisTypeCache;
 import codes.shiftmc.common.cache.TypeCache;
+import codes.shiftmc.common.connectors.MongoConnector;
 import codes.shiftmc.common.model.UserData;
 import codes.shiftmc.common.model.enums.CachingMethod;
 import codes.shiftmc.common.model.enums.StorageMethod;
 import codes.shiftmc.common.repository.TransactionRepository;
 import codes.shiftmc.common.repository.UserRepository;
+import codes.shiftmc.common.repository.impl.MongoTransactionRepository;
+import codes.shiftmc.common.repository.impl.MongoUserRepository;
 import codes.shiftmc.common.service.UserService;
 import codes.shiftmc.shiftEconomy.configuration.CacheSource;
 import codes.shiftmc.shiftEconomy.configuration.DataSource;
+import io.lettuce.core.RedisClient;
+import io.lettuce.core.api.reactive.RedisReactiveCommands;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -27,11 +33,31 @@ public final class ShiftEconomy extends JavaPlugin {
     public void onEnable() {
         saveDefaultConfig();
         loadConfigurations();
+        connectDataSources();
     }
 
-    @Override
-    public void onDisable() {
-        // Plugin shutdown logic
+    private void connectDataSources() {
+        switch (dataSource.storageMethod()) {
+            case MONGODB -> {
+                var mongoConnector = new MongoConnector(dataSource.mongodbConnectionUri(), dataSource.database());
+                userRepository = new MongoUserRepository(mongoConnector.getMongoDatabase());
+                transactionRepository = new MongoTransactionRepository(mongoConnector.getMongoDatabase());
+            }
+            default -> throw new IllegalStateException("Not yet implemented: " + dataSource.storageMethod());
+        }
+
+        switch (cacheSource.cachingMethod()) {
+            case REDIS -> {
+                RedisClient redisClient = RedisClient.create("redis://" + cacheSource.password() + "@" + cacheSource.address() + ":" + cacheSource.port());
+                RedisReactiveCommands<String, String> redisCommands = redisClient.connect().reactive();
+                userDataCache = new RedisTypeCache<>(redisCommands, UserData.class);
+            }
+
+            default -> throw new IllegalStateException("Not yet implemented: " + cacheSource.cachingMethod());
+        }
+
+        // Initialize UserService with the repositories and cache
+        userService = new UserService(userRepository, userDataCache);
     }
 
     private void loadConfigurations() {
