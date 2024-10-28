@@ -1,4 +1,4 @@
-package codes.shiftmc.shiftEconomyProxy.model;
+package codes.shiftmc.common.model;
 
 import lombok.Data;
 

@@ -1,6 +1,6 @@
-package codes.shiftmc.shiftEconomyProxy.repository;
+package codes.shiftmc.common.repository;
 
-import codes.shiftmc.shiftEconomyProxy.model.UserData;
+import codes.shiftmc.common.model.UserData;
 import reactor.core.publisher.Mono;
 
 import java.util.UUID;

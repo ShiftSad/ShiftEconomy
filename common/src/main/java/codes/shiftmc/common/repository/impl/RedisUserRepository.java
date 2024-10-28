@@ -1,7 +1,7 @@
-package codes.shiftmc.shiftEconomyProxy.repository.impl;
+package codes.shiftmc.common.repository.impl;
 
-import codes.shiftmc.shiftEconomyProxy.model.UserData;
-import codes.shiftmc.shiftEconomyProxy.repository.UserRepository;
+import codes.shiftmc.common.model.UserData;
+import codes.shiftmc.common.repository.UserRepository;
 import io.lettuce.core.api.reactive.RedisReactiveCommands;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;

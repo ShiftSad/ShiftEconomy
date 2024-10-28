@@ -1,6 +1,6 @@
-package codes.shiftmc.shiftEconomyProxy.repository;
+package codes.shiftmc.common.repository;
 
-import codes.shiftmc.shiftEconomyProxy.model.Transaction;
+import codes.shiftmc.common.model.Transaction;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 

@@ -1,7 +1,7 @@
-package codes.shiftmc.shiftEconomyProxy.repository.impl;
+package codes.shiftmc.common.repository.impl;
 
-import codes.shiftmc.shiftEconomyProxy.model.Transaction;
-import codes.shiftmc.shiftEconomyProxy.repository.TransactionRepository;
+import codes.shiftmc.common.model.Transaction;
+import codes.shiftmc.common.repository.TransactionRepository;
 import com.mongodb.client.model.Filters;
 import com.mongodb.reactivestreams.client.MongoCollection;
 import com.mongodb.reactivestreams.client.MongoDatabase;
