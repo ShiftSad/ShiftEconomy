@@ -3,7 +3,6 @@ package codes.shiftmc.shiftEconomyProxy.repository.impl;
 import codes.shiftmc.shiftEconomyProxy.model.Transaction;
 import codes.shiftmc.shiftEconomyProxy.repository.TransactionRepository;
 import com.mongodb.client.model.Filters;
-import com.mongodb.reactivestreams.client.MongoClient;
 import com.mongodb.reactivestreams.client.MongoCollection;
 import com.mongodb.reactivestreams.client.MongoDatabase;
 import reactor.core.publisher.Flux;
