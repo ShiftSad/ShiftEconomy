@@ -4,12 +4,10 @@ import codes.shiftmc.common.cache.TypeCache;
 import codes.shiftmc.common.model.UserData;
 import codes.shiftmc.common.repository.UserRepository;
 import lombok.AllArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import reactor.core.publisher.Mono;
 
 import java.util.UUID;
 
-@RequiredArgsConstructor
 @AllArgsConstructor
 public class UserService {
 
@@ -46,7 +44,7 @@ public class UserService {
     public Mono<UserData> findByUsername(String username) {
         return userRepository.findByUsername(username)
                 .flatMap(user -> {
-                    if (cache != null) return cache.set(cacheKey(user.getUuid()), user, CACHE_EXPIRATION_TIME).thenReturn(user);
+                    if (cache != null) return cache.set(cacheKey(user.getUUID()), user, CACHE_EXPIRATION_TIME).thenReturn(user);
                     else return Mono.just(user);
                 });
     }
@@ -60,7 +58,7 @@ public class UserService {
     public Mono<UserData> save(UserData userData) {
         return userRepository.save(userData)
                 .flatMap(user -> {
-                    if (cache != null) return cache.set(cacheKey(user.getUuid()), user, CACHE_EXPIRATION_TIME).thenReturn(user);
+                    if (cache != null) return cache.set(cacheKey(user.getUUID()), user, CACHE_EXPIRATION_TIME).thenReturn(user);
                     else return Mono.just(user);
                 });
     }
@@ -75,7 +73,7 @@ public class UserService {
     public Mono<UserData> updateBalance(UUID uuid, double newBalance) {
         return userRepository.updateBalance(uuid, newBalance)
                 .flatMap(user -> {
-                    if (cache != null) return cache.set(cacheKey(user.getUuid()), user, CACHE_EXPIRATION_TIME).thenReturn(user);
+                    if (cache != null) return cache.set(cacheKey(user.getUUID()), user, CACHE_EXPIRATION_TIME).thenReturn(user);
                     else return Mono.just(user);
                 });
     }
