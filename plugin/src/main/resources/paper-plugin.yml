@@ -3,5 +3,9 @@ version: '1.0.0'
 main: codes.shiftmc.shiftEconomy.ShiftEconomy
 api-version: '1.21'
 authors: [ShiftSad]
-description: Um plugin experimental de armas para o Minecraft.
-website: https://github.com/ShiftSad/Guns
+dependencies:
+  server:
+    Vault:
+      load: BEFORE
+      required: true
+      join-classpath: true
