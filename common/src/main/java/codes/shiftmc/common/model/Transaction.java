@@ -4,4 +4,4 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
 
-public record Transaction(@NotNull UUID senderUUID, @NotNull UUID receiverUUID, double amount, long timestamp) { }
+public record Transaction(UUID senderUUID, UUID receiverUUID, double amount, long timestamp) { }
