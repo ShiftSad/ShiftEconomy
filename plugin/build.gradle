@@ -18,6 +18,7 @@ repositories {
         url = "https://oss.sonatype.org/content/groups/public/"
     }
     maven { url = "https://jitpack.io/" }
+    maven { url = "https://repo.codemc.org/repository/maven-public/" }
 }
 
 dependencies {
@@ -31,10 +32,13 @@ dependencies {
 
     compileOnly("org.projectlombok:lombok:1.18.34")
     annotationProcessor("org.projectlombok:lombok:1.18.34")
+
+    compileOnly "dev.jorel:commandapi-bukkit-core:9.6.0"
 }
 
 def paperPlugins = runPaper.downloadPluginsSpec {
     url("https://github.com/MilkBowl/Vault/releases/download/1.7.3/Vault.jar")
+    url("https://github.com/JorelAli/CommandAPI/releases/download/9.6.1/CommandAPI-9.6.1.jar")
 }
 
 tasks {

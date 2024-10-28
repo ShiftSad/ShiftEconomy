@@ -10,6 +10,10 @@ import com.mongodb.reactivestreams.client.MongoDatabase;
 import lombok.Getter;
 import org.bson.BsonDocument;
 import org.bson.BsonInt64;
+import org.bson.UuidRepresentation;
+import org.bson.codecs.configuration.CodecRegistries;
+import org.bson.codecs.configuration.CodecRegistry;
+import org.bson.codecs.pojo.PojoCodecProvider;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -27,7 +31,11 @@ public class MongoConnector {
                 .version(ServerApiVersion.V1)
                 .build();
 
+        CodecRegistry pojoCodecRegistry = CodecRegistries.fromProviders(PojoCodecProvider.builder().automatic(true).build());
+
         MongoClientSettings settings = MongoClientSettings.builder()
+                .codecRegistry(CodecRegistries.fromRegistries(MongoClientSettings.getDefaultCodecRegistry(), pojoCodecRegistry))
+                .uuidRepresentation(UuidRepresentation.STANDARD)
                 .applyConnectionString(new ConnectionString(connectionString))
                 .serverApi(serverApi)
                 .build();

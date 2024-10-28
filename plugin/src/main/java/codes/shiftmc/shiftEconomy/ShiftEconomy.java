@@ -12,8 +12,10 @@ import codes.shiftmc.common.repository.impl.MongoTransactionRepository;
 import codes.shiftmc.common.repository.impl.MongoUserRepository;
 import codes.shiftmc.common.service.TransactionService;
 import codes.shiftmc.common.service.UserService;
+import codes.shiftmc.shiftEconomy.commands.MoneyCommand;
 import codes.shiftmc.shiftEconomy.configuration.CacheSource;
 import codes.shiftmc.shiftEconomy.configuration.DataSource;
+import codes.shiftmc.shiftEconomy.listeners.AsyncPlayerPreLoginListener;
 import codes.shiftmc.shiftEconomy.vault.VaultEconomyHook;
 import io.lettuce.core.RedisClient;
 import io.lettuce.core.api.reactive.RedisReactiveCommands;
@@ -48,6 +50,15 @@ public final class ShiftEconomy extends JavaPlugin {
                         this,
                         ServicePriority.Highest
                 );
+
+        // Register commands
+        new MoneyCommand(
+                userService,
+                transactionService
+        ).register();
+
+        // Register listeners
+        Bukkit.getServer().getPluginManager().registerEvents(new AsyncPlayerPreLoginListener(userService), this);
     }
 
     private void connectDataSources() {
