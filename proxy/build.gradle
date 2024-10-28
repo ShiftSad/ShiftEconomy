@@ -25,6 +25,7 @@ dependencies {
     compileOnly("com.velocitypowered:velocity-api:3.3.0-SNAPSHOT")
     annotationProcessor("com.velocitypowered:velocity-api:3.3.0-SNAPSHOT")
 
+    // Mongodb
     implementation("org.mongodb:mongodb-driver-reactivestreams:5.2.0")
     implementation("io.projectreactor:reactor-core:3.6.10")
 
