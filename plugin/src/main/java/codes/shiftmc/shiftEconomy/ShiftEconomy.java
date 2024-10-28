@@ -1,8 +1,27 @@
 package codes.shiftmc.shiftEconomy;
 
+import codes.shiftmc.common.cache.TypeCache;
+import codes.shiftmc.common.model.UserData;
+import codes.shiftmc.common.model.enums.CachingMethod;
+import codes.shiftmc.common.model.enums.StorageMethod;
+import codes.shiftmc.common.repository.TransactionRepository;
+import codes.shiftmc.common.repository.UserRepository;
+import codes.shiftmc.common.service.UserService;
+import codes.shiftmc.shiftEconomy.configuration.CacheSource;
+import codes.shiftmc.shiftEconomy.configuration.DataSource;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public final class ShiftEconomy extends JavaPlugin {
+
+    private DataSource dataSource;
+    private CacheSource cacheSource;
+
+    private TypeCache<UserData> userDataCache;
+    private UserRepository userRepository;
+    private TransactionRepository transactionRepository;
+
+    private UserService userService;
 
     @Override
     public void onEnable() {
