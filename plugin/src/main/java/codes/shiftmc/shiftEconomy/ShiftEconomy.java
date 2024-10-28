@@ -10,12 +10,17 @@ import codes.shiftmc.common.repository.TransactionRepository;
 import codes.shiftmc.common.repository.UserRepository;
 import codes.shiftmc.common.repository.impl.MongoTransactionRepository;
 import codes.shiftmc.common.repository.impl.MongoUserRepository;
+import codes.shiftmc.common.service.TransactionService;
 import codes.shiftmc.common.service.UserService;
 import codes.shiftmc.shiftEconomy.configuration.CacheSource;
 import codes.shiftmc.shiftEconomy.configuration.DataSource;
+import codes.shiftmc.shiftEconomy.vault.VaultEconomyHook;
 import io.lettuce.core.RedisClient;
 import io.lettuce.core.api.reactive.RedisReactiveCommands;
+import net.milkbowl.vault.economy.Economy;
+import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.plugin.ServicePriority;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public final class ShiftEconomy extends JavaPlugin {
@@ -28,12 +33,21 @@ public final class ShiftEconomy extends JavaPlugin {
     private TransactionRepository transactionRepository;
 
     private UserService userService;
+    private TransactionService transactionService;
 
     @Override
     public void onEnable() {
         saveDefaultConfig();
         loadConfigurations();
         connectDataSources();
+
+        Bukkit.getServer().getServicesManager()
+                .register(
+                        Economy.class,
+                        new VaultEconomyHook(userService, transactionService),
+                        this,
+                        ServicePriority.Highest
+                );
     }
 
     private void connectDataSources() {
@@ -58,6 +72,7 @@ public final class ShiftEconomy extends JavaPlugin {
 
         // Initialize UserService with the repositories and cache
         userService = new UserService(userRepository, userDataCache);
+        transactionService = new TransactionService(transactionRepository);
     }
 
     private void loadConfigurations() {

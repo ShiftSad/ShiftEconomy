@@ -33,9 +33,14 @@ dependencies {
     annotationProcessor("org.projectlombok:lombok:1.18.34")
 }
 
+def paperPlugins = runPaper.downloadPluginsSpec {
+    url("https://github.com/MilkBowl/Vault/releases/download/1.7.3/Vault.jar")
+}
+
 tasks {
     runServer {
         minecraftVersion("1.21.1")
+        downloadPlugins.from(paperPlugins)
     }
 }
 
