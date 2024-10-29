@@ -56,11 +56,13 @@ public class UserService {
      * @return A Mono emitting the saved or updated UserData.
      */
     public Mono<UserData> save(UserData userData) {
-        return userRepository.save(userData)
+        return userRepository.findByUuid(userData.getUUID())
                 .flatMap(user -> {
+                    userRepository.updateBalance(user.getUUID(), userData.getBalance());
                     if (cache != null) return cache.set(cacheKey(user.getUUID()), user, CACHE_EXPIRATION_TIME).thenReturn(user);
                     else return Mono.just(user);
-                });
+                })
+                .switchIfEmpty(userRepository.save(userData));
     }
 
     /**
@@ -71,7 +73,12 @@ public class UserService {
      * @return A Mono emitting the updated UserData.
      */
     public Mono<UserData> updateBalance(UUID uuid, double newBalance) {
-        return userRepository.updateBalance(uuid, newBalance)
+        return userRepository.findByUuid(uuid)
+                .flatMap(user -> {
+                    user.setBalance(newBalance);
+                    return userRepository.updateBalance(uuid, newBalance)
+                            .then(Mono.just(user));
+                })
                 .flatMap(user -> {
                     if (cache != null) return cache.set(cacheKey(user.getUUID()), user, CACHE_EXPIRATION_TIME).thenReturn(user);
                     else return Mono.just(user);
