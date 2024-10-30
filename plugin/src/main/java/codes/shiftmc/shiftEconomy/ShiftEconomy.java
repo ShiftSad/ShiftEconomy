@@ -1,5 +1,6 @@
 package codes.shiftmc.shiftEconomy;
 
+import codes.shiftmc.common.cache.LocalTypeCache;
 import codes.shiftmc.common.cache.RedisTypeCache;
 import codes.shiftmc.common.cache.TypeCache;
 import codes.shiftmc.common.connectors.MongoConnector;
@@ -77,6 +78,7 @@ public final class ShiftEconomy extends JavaPlugin {
                 RedisReactiveCommands<String, String> redisCommands = redisClient.connect().reactive();
                 userDataCache = new RedisTypeCache<>(redisCommands, UserData.class);
             }
+            case LOCAL -> userDataCache = new LocalTypeCache<>();
 
             default -> throw new IllegalStateException("Not yet implemented: " + cacheSource.cachingMethod());
         }
