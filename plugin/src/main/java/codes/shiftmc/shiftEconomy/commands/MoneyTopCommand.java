@@ -11,6 +11,8 @@ import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import reactor.core.publisher.Flux;
 
+import java.util.UUID;
+
 public class MoneyTopCommand {
 
     private static final MiniMessage mm = MiniMessage.miniMessage();
@@ -21,7 +23,11 @@ public class MoneyTopCommand {
             
             """
     );
-    private static final String ELEMENTS = "<green>. <player_name> - <balance>";
+    private static final String FOOTER = """
+
+            <green><click:run_command:'/money top <back_upper>..<back_lower>'><<</click> | <click:run_command:'/money top <forward_lower>..<forward_upper>'>>></click>
+            """;
+    private static final String ELEMENTS = "<green><position>. <player_name> - <balance>";
 
     public static CommandAPICommand get(UserService userService) {
         return new CommandAPICommand("top")
@@ -35,12 +41,25 @@ public class MoneyTopCommand {
                             .collectList()
                             .doOnNext(users -> {
                                 sender.sendMessage(HEADER);
-                                for (UserData data : users) {
+
+                                for (int i = range.getLowerBound(); i < range.getUpperBound(); i++) {
+                                    UserData data;
+                                    if (i >= users.size()) data = new UserData(null, "vazio", 0);
+                                    else data = users.get(i);
+
                                     sender.sendMessage(mm.deserialize(ELEMENTS,
                                             Placeholder.unparsed("player_name", data.getUsername()),
-                                            Placeholder.unparsed("balance", NumberFormatter.format(data.getBalance()))
-                                    ));
+                                            Placeholder.unparsed("balance", NumberFormatter.format(data.getBalance())),
+                                            Placeholder.unparsed("position", i + 1 + ""))
+                                    );
                                 }
+
+                                sender.sendMessage(mm.deserialize(FOOTER
+                                        .replace("<back_lower>", Math.max(range.getUpperBound() - 10, 10) + "")
+                                        .replace("<back_upper>", Math.max(range.getLowerBound() - 10, 0) + "")
+                                        .replace("<forward_lower>", range.getLowerBound() + 10 + "")
+                                        .replace("<forward_upper>", range.getUpperBound() + 10 + "")
+                                ));
                             })
                             .subscribe();
                 });
