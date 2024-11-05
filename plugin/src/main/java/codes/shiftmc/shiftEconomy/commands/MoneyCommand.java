@@ -49,7 +49,7 @@ public class MoneyCommand {
                 });
         pay.register();
 
-        var set = new CommandAPICommand("set")
+        var set = new CommandAPICommand("give")
                 .withArguments(
                         playerArg,
                         amountArg
