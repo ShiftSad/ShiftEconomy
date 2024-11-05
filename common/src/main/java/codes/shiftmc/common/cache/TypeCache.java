@@ -2,6 +2,8 @@ package codes.shiftmc.common.cache;
 
 import reactor.core.publisher.Mono;
 
+import java.util.List;
+
 public interface TypeCache<T> {
 
     /**
@@ -20,4 +22,8 @@ public interface TypeCache<T> {
      * @return A Mono emitting the saved object.
      */
     Mono<T> set(String key, T value, long expirationTime);
+
+    Mono<List<T>> getList(String key);
+
+    Mono<List<T>> setList(String key, List<T> value, long expirationTime);
 }

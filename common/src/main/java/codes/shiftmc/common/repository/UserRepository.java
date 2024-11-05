@@ -1,6 +1,7 @@
 package codes.shiftmc.common.repository;
 
 import codes.shiftmc.common.model.UserData;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.util.UUID;
@@ -39,4 +40,15 @@ public interface UserRepository {
      * @return A Mono emitting the updated UserData.
      */
     Mono<UserData> updateBalance(UUID uuid, double newBalance);
+
+    /**
+     * Finds the top users based on a specified range.
+     * This method retrieves users ordered by balance in descending order,
+     * returning a subset based on the given range.
+     *
+     * @param from The starting index of the range.
+     * @param to The ending index of the range (exclusive).
+     * @return A Flux emitting UserData objects within the specified range.
+     */
+    Flux<UserData> findTopUsers(int from, int to);
 }

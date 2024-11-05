@@ -67,7 +67,7 @@ public class MoneyCommand {
 
         new CommandAPICommand("money")
                 .withOptionalArguments(new OfflinePlayerArgument("player"))
-                .withSubcommands(set, pay)
+                .withSubcommands(set, pay, MoneyTopCommand.get(userService))
                 .executesPlayer((player, arguments) -> {
                     var target = arguments.getOptionalByClass("player", OfflinePlayer.class).orElse(player);
                     checkMoney(target).subscribe(player::sendMessage);

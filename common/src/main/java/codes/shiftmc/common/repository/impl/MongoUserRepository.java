@@ -4,9 +4,11 @@ import codes.shiftmc.common.model.UserData;
 import codes.shiftmc.common.repository.UserRepository;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.ReplaceOptions;
+import com.mongodb.client.model.Sorts;
 import com.mongodb.client.model.Updates;
 import com.mongodb.reactivestreams.client.MongoCollection;
 import com.mongodb.reactivestreams.client.MongoDatabase;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.util.UUID;
@@ -45,5 +47,13 @@ public class MongoUserRepository implements UserRepository {
                 Filters.eq("uUID", uuid),
                 Updates.set("balance", newBalance)
         ));
+    }
+
+    @Override
+    public Flux<UserData> findTopUsers(int from, int to) {
+        return Flux.from(userCollection.find()
+                .sort(Sorts.descending("balance"))
+                .skip(from)
+                .limit(to - from));
     }
 }

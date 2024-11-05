@@ -4,6 +4,7 @@ import codes.shiftmc.common.cache.TypeCache;
 import codes.shiftmc.common.model.UserData;
 import codes.shiftmc.common.repository.UserRepository;
 import lombok.AllArgsConstructor;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.util.UUID;
@@ -12,13 +13,19 @@ import java.util.UUID;
 public class UserService {
 
     private static final String USER_CACHE_KEY_PREFIX = "user:";
+    private static final String TOP_USERS_CACHE_KEY = "topUsers:";
     private static final long CACHE_EXPIRATION_TIME = 3600; // 1 hour in seconds
+    private static final long TOP_USERS_CACHE_EXPIRATION_TIME = 300; // 5 minutes in seconds
 
     private final UserRepository userRepository;
     private final TypeCache<UserData> cache;
 
     private static String cacheKey(UUID uuid) {
         return USER_CACHE_KEY_PREFIX + uuid.toString();
+    }
+
+    private static String topUsersCacheKey(int from, int to) {
+        return TOP_USERS_CACHE_KEY + from + ":" + to;
     }
 
     /**
@@ -83,5 +90,28 @@ public class UserService {
                     if (cache != null) return cache.set(cacheKey(user.getUUID()), user, CACHE_EXPIRATION_TIME).thenReturn(user);
                     else return Mono.just(user);
                 });
+    }
+
+    public Mono<Double> getBalance(UUID uuid) {
+        return findByUuid(uuid).map(UserData::getBalance);
+    }
+
+    public Flux<UserData> findTopUsers(int from, int to) {
+        if (cache != null) {
+            String cacheKey = topUsersCacheKey(from, to);
+            return cache.get(cacheKey)
+                    .flatMapMany(Flux::just)
+                    .switchIfEmpty(
+                            userRepository.findTopUsers(from, to)
+                                    .collectList()
+                                    .flatMapMany(users -> {
+                                        // Cache the list of users and set expiration
+                                        cache.setList(cacheKey, users, TOP_USERS_CACHE_EXPIRATION_TIME).subscribe();
+                                        return Flux.fromIterable(users);
+                                    })
+                    );
+        } else {
+            return userRepository.findTopUsers(from, to);
+        }
     }
 }

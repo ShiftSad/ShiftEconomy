@@ -13,7 +13,9 @@ public final class NumberFormatter {
     }
 
     public static String format(double number) {
-        if (number <= 0) throw new IllegalArgumentException("Invalid number: " + number);
+        if (number < 0) throw new IllegalArgumentException("Invalid number: " + number);
+        if (number == 0) return "0";
+
         final var size = Math.log10(number);
 
         if (size < 3) return String.valueOf(number);
