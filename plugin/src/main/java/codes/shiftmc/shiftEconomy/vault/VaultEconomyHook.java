@@ -46,10 +46,9 @@ public class VaultEconomyHook extends EconomyWrapper {
 
     @Override
     public double getBalance(OfflinePlayer offlinePlayer) {
-        return userService.findByUuid(offlinePlayer.getUniqueId())
-                .map(UserData::getBalance) // Get balance will never return null! WHY ARE YOU MAD INTELLIJ
-                .switchIfEmpty(Mono.just(0.0))
-                .block();
+        return userService.getBalance(offlinePlayer.getUniqueId())
+                .blockOptional()
+                .orElseThrow(() -> new RuntimeException("Could not get balance"));
     }
 
     @Override
@@ -89,10 +88,12 @@ public class VaultEconomyHook extends EconomyWrapper {
     @Override
     public boolean createPlayerAccount(OfflinePlayer offlinePlayer) {
         // Create new user account if it does not exist
-        return Boolean.TRUE.equals(userService.findByUuid(offlinePlayer.getUniqueId())
-                .switchIfEmpty(userService.save(new UserData(offlinePlayer.getUniqueId(), offlinePlayer.getName(), 0.0)))
-                .map(user -> true)
-                .defaultIfEmpty(false)
-                .block());
+        boolean present = userService.findByUuid(offlinePlayer.getUniqueId()).blockOptional().isPresent();
+        if (!present) {
+            userService.save(new UserData(offlinePlayer.getUniqueId(), offlinePlayer.getName(), 0.0)).subscribe();
+            present = true;
+        }
+
+        return present;
     }
 }
