@@ -11,8 +11,6 @@ import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import reactor.core.publisher.Flux;
 
-import java.util.UUID;
-
 public class MoneyTopCommand {
 
     private static final MiniMessage mm = MiniMessage.miniMessage();
@@ -27,6 +25,14 @@ public class MoneyTopCommand {
 
             <green><click:run_command:'/money top <back_upper>..<back_lower>'><<</click> | <click:run_command:'/money top <forward_lower>..<forward_upper>'>>></click>
             """;
+    private static final Component ERROR_BIG = mm.deserialize("""
+            <red>ERROR: Você não pode verificar mais de 15 jogadores de uma vez.
+            """
+    );
+    private static final Component ERROR_NEGATIVE = mm.deserialize("""
+            <red>ERROR: Você não pode olhar um top negativo.
+            """
+    );
     private static final String ELEMENTS = "<green><position>. <player_name> - <balance>";
 
     public static CommandAPICommand get(UserService userService) {
@@ -35,6 +41,15 @@ public class MoneyTopCommand {
                 .executes((sender, context) -> {
                     IntegerRange range = (IntegerRange) context.getOptional("range")
                             .orElse(new IntegerRange(0, 10));
+                    if (range.getUpperBound() - range.getLowerBound() > 15) {
+                        sender.sendMessage(ERROR_BIG);
+                        return;
+                    }
+
+                    if (range.getLowerBound() < 0 || range.getUpperBound() < 0) {
+                        sender.sendMessage(ERROR_NEGATIVE);
+                        return;
+                    }
 
                     Flux<UserData> usersFlux = userService.findTopUsers(range.getLowerBound(), range.getUpperBound());
                     usersFlux
