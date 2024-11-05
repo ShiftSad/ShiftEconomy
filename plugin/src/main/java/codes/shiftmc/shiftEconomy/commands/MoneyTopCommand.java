@@ -11,8 +11,6 @@ import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import reactor.core.publisher.Flux;
 
-import java.util.UUID;
-
 public class MoneyTopCommand {
 
     private static final MiniMessage mm = MiniMessage.miniMessage();
@@ -37,16 +35,11 @@ public class MoneyTopCommand {
                             .collectList()
                             .doOnNext(users -> {
                                 sender.sendMessage(HEADER);
-
-                                for (int i = 0; i < (range.getUpperBound() - range.getLowerBound()); i++) {
-                                    UserData user;
-                                    if (i < users.size()) user = users.get(i);
-                                    else user = new UserData(UUID.randomUUID(), "vazio", 0);
-
-                                    mm.deserialize(ELEMENTS,
-                                            Placeholder.unparsed("player_name", user.getUsername()),
-                                            Placeholder.unparsed("balance", NumberFormatter.format(user.getBalance()))
-                                    );
+                                for (UserData data : users) {
+                                    sender.sendMessage(mm.deserialize(ELEMENTS,
+                                            Placeholder.unparsed("player_name", data.getUsername()),
+                                            Placeholder.unparsed("balance", NumberFormatter.format(data.getBalance()))
+                                    ));
                                 }
                             })
                             .subscribe();

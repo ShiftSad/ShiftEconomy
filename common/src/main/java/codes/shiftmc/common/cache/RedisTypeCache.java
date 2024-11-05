@@ -1,9 +1,9 @@
 package codes.shiftmc.common.cache;
 
-import codes.shiftmc.common.model.UserData;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.type.TypeFactory;
 import io.lettuce.core.api.reactive.RedisReactiveCommands;
 import lombok.AllArgsConstructor;
 import reactor.core.publisher.Mono;
@@ -45,10 +45,10 @@ public class RedisTypeCache<T> implements TypeCache<T> {
         return redisCommands.get(key)
                 .flatMap(json -> {
                     try {
-                        List<T> users = objectMapper.readValue(json, new TypeReference<>() {});
-                        return Mono.just(users);
-                    } catch (JsonProcessingException e) {
-                        return Mono.error(new RuntimeException("Failed to deserialize list", e));
+                        List<T> list = objectMapper.readValue(json, objectMapper.getTypeFactory().constructCollectionLikeType(List.class, clazz));
+                        return Mono.just(list);
+                    } catch (Exception e) {
+                        return Mono.error(new RuntimeException("Failed to deserialize object", e));
                     }
                 });
     }
@@ -62,5 +62,9 @@ public class RedisTypeCache<T> implements TypeCache<T> {
         } catch (JsonProcessingException e) {
             return Mono.error(new RuntimeException("Failed to serialize list", e));
         }
+    }
+
+    private JavaType listOf(Class clazz) {
+        return TypeFactory.defaultInstance().constructCollectionType(List.class, clazz);
     }
 }

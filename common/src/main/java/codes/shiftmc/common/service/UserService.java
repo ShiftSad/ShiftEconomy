@@ -99,13 +99,12 @@ public class UserService {
     public Flux<UserData> findTopUsers(int from, int to) {
         if (cache != null) {
             String cacheKey = topUsersCacheKey(from, to);
-            return cache.get(cacheKey)
-                    .flatMapMany(Flux::just)
+            return cache.getList(cacheKey)
+                    .flatMapMany(Flux::fromIterable)
                     .switchIfEmpty(
                             userRepository.findTopUsers(from, to)
                                     .collectList()
                                     .flatMapMany(users -> {
-                                        // Cache the list of users and set expiration
                                         cache.setList(cacheKey, users, TOP_USERS_CACHE_EXPIRATION_TIME).subscribe();
                                         return Flux.fromIterable(users);
                                     })
