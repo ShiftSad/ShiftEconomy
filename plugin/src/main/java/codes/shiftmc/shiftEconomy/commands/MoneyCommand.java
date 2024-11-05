@@ -47,6 +47,7 @@ public class MoneyCommand {
                     }
                     pay(player.getUniqueId(), target.getUniqueId(), target.getName(), amount, false).subscribe(player::sendMessage);
                 });
+        pay.register();
 
         var set = new CommandAPICommand("set")
                 .withArguments(
@@ -67,7 +68,7 @@ public class MoneyCommand {
 
         new CommandAPICommand("money")
                 .withOptionalArguments(new OfflinePlayerArgument("player"))
-                .withSubcommands(set, pay, MoneyTopCommand.get(userService))
+                .withSubcommands(set, pay, MoneyTopCommand.get(userService), MoneyTransactionsCommand.get(userService, transactionService))
                 .executesPlayer((player, arguments) -> {
                     var target = arguments.getOptionalByClass("player", OfflinePlayer.class).orElse(player);
                     checkMoney(target).subscribe(player::sendMessage);
