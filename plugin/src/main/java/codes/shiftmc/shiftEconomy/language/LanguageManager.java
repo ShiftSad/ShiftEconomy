@@ -20,7 +20,7 @@ import java.util.regex.Pattern;
 
 @Slf4j
 public final class LanguageManager {
-    private static final String DEFAULT_LANGUAGE = "en_US";
+    public static final String DEFAULT_LANGUAGE = "en_US";
     private static LanguageManager instance;
     private final JavaPlugin plugin;
 
@@ -304,6 +304,18 @@ public final class LanguageManager {
      * Sends a localized message to the specified player based on their locale,
      * with placeholders resolved.
      *
+     * @param sender the sender to whom the message will be sent
+     * @param message the message key to retrieve and send
+     * @param placeholders the placeholders to resolve within the message
+     */
+    public void sendMessage(@NotNull CommandSender sender, @NotNull String message, @NotNull TagResolver... placeholders) {
+        sender.sendMessage(getMessage(sender, message, placeholders));
+    }
+
+    /**
+     * Sends a localized message to the specified player based on their locale,
+     * with placeholders resolved.
+     *
      * @param player the player to whom the message will be sent
      * @param message the message key to retrieve and send
      * @param placeholders the placeholders to resolve within the message
@@ -311,6 +323,7 @@ public final class LanguageManager {
     public void sendMessage(@NotNull Player player, @NotNull String message, @NotNull TagResolver... placeholders) {
         player.sendMessage(getMessage(player, message, placeholders));
     }
+
 
     /**
      * Retrieves the raw message string for a given language and message key.
@@ -321,8 +334,48 @@ public final class LanguageManager {
      * @return the raw message string if found, or a default fallback message
      */
     @NotNull
-    private String getRawMessage(@NotNull String language, @NotNull String message) {
+    public String getRawMessage(@NotNull String language, @NotNull String message) {
         language = messages.containsKey(language) ? language : DEFAULT_LANGUAGE;
         return messages.getOrDefault(language, new HashMap<>()).getOrDefault(message, "Message not found");
     }
+
+    /**
+     * Retrieves the raw message string for a given language and message key.
+     * If the language or message key is not found, returns a default fallback message.
+     *
+     * @param message the message key to retrieve
+     * @return the raw message string if found, or a default fallback message
+     */
+    @NotNull
+    public String getRawMessage(@NotNull String message) {
+        return getRawMessage(DEFAULT_LANGUAGE, message);
+    }
+
+    /**
+     * Retrieves the raw message string for a given language and message key.
+     * If the language or message key is not found, returns a default fallback message.
+     *
+     * @param player the player to query the language
+     * @param message the message key to retrieve
+     * @return the raw message string if found, or a default fallback message
+     */
+    @NotNull
+    public String getRawMessage(@NotNull Player player, @NotNull String message) {
+        return getRawMessage(player.locale().toLanguageTag(), message);
+    }
+
+    /**
+     * Retrieves the raw message string for a given language and message key.
+     * If the language or message key is not found, returns a default fallback message.
+     *
+     * @param sender the maybe player to query the language
+     * @param message the message key to retrieve
+     * @return the raw message string if found, or a default fallback message
+     */
+    @NotNull
+    public String getRawMessage(@NotNull CommandSender sender, @NotNull String message) {
+        if (sender instanceof Player player) return getRawMessage(player, message);
+        else return getRawMessage(message);
+    }
+
 }
