@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
@@ -247,6 +248,36 @@ public final class LanguageManager {
     public Component getMessage(@NotNull Player player, @NotNull String message) {
         return getMessage(player.locale().toLanguageTag(), message);
     }
+
+    /**
+     * Retrieves a localized message component for the specified sender and message key,
+     * resolving placeholders as specified.
+     *
+     * @param sender the sender whose may or may not be a player
+     * @param message the message key to retrieve
+     * @param placeholders the placeholders to resolve within the message
+     * @return the deserialized message component with resolved placeholders, localized to the player's language
+     */
+    @NotNull
+    public Component getMessage(@NotNull CommandSender sender, @NotNull String message, @NotNull TagResolver... placeholders) {
+        if (sender instanceof Player player) return getMessage(player.locale().toLanguageTag(), message, placeholders);
+        else return getMessage(message, placeholders);
+    }
+
+    /**
+     * Retrieves a localized message component for the specified sender and message key,
+     * without any placeholders.
+     *
+     * @param sender the sender whose may or may not be a player
+     * @param message the message key to retrieve
+     * @return the deserialized message component, localized to the player's language
+     */
+    @NotNull
+    public Component getMessage(@NotNull CommandSender sender, @NotNull String message) {
+        if (sender instanceof Player player) return getMessage(player.locale().toLanguageTag(), message);
+        else return getMessage(message);
+    }
+
 
     /**
      * Sends a localized message to the specified player based on their locale,
