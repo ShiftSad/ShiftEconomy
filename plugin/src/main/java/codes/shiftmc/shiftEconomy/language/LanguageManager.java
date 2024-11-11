@@ -20,6 +20,7 @@ import java.util.Properties;
 
 @Slf4j
 public final class LanguageManager {
+    private static final String DEFAULT_LANGUAGE = "en_US";
     private static LanguageManager instance;
     private final JavaPlugin plugin;
 
@@ -119,10 +120,11 @@ public final class LanguageManager {
      * @return the deserialized and cached message component, or a fallback if not found
      */
     @NotNull
-    public Component getMessage(@NotNull String language, @NotNull String message) {
+    public Component getMessage(String language, @NotNull String message) {
+        var languageTemp = messages.containsKey(language) ? language : DEFAULT_LANGUAGE;
         return computedMessages
             .computeIfAbsent(language, k -> new HashMap<>())
-            .computeIfAbsent(message, k -> mm.deserialize(getRawMessage(language, message)));
+            .computeIfAbsent(message, k -> mm.deserialize(getRawMessage(languageTemp, message)));
     }
 
     /**
@@ -150,7 +152,7 @@ public final class LanguageManager {
      */
     @NotNull
     public Component getMessage(@NotNull Player player, @NotNull String message, @NotNull TagResolver... placeholders) {
-        return getMessage(player.locale().getISO3Language(), message, placeholders);
+        return getMessage(player.locale().toLanguageTag(), message, placeholders);
     }
 
     /**
@@ -163,7 +165,7 @@ public final class LanguageManager {
      */
     @NotNull
     public Component getMessage(@NotNull Player player, @NotNull String message) {
-        return getMessage(player.locale().getISO3Language(), message);
+        return getMessage(player.locale().toLanguageTag(), message);
     }
 
     /**
@@ -199,6 +201,7 @@ public final class LanguageManager {
      */
     @NotNull
     private String getRawMessage(@NotNull String language, @NotNull String message) {
+        language = messages.containsKey(language) ? language : DEFAULT_LANGUAGE;
         return messages.getOrDefault(language, new HashMap<>()).getOrDefault(message, "Message not found");
     }
 }

@@ -1,0 +1,10 @@
+# English Language files.
+# All messages are formated as MiniMessages.
+
+# You can create then thorough a webui: https://webui.advntr.dev/
+
+generic.error="<red>Something went terribly wrong"
+generic.error.stacktrace="<red>Something went terribly wrong: <stacktrace>"
+
+player.balance="<green>Player <name> has <gold><balance>$</gold></green>"
+player.balance.missing="<red>Balance not found for player"
