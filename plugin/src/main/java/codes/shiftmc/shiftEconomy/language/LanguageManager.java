@@ -37,7 +37,7 @@ public final class LanguageManager {
      *
      * @param plugin The main plugin instance.
      */
-    private LanguageManager(JavaPlugin plugin) {
+    private LanguageManager(@NotNull JavaPlugin plugin) {
         this.plugin = plugin;
         var languages = new File(plugin.getDataFolder() + "/languages");
 
@@ -77,7 +77,7 @@ public final class LanguageManager {
      *
      * @param languagesFolder The languages directory.
      */
-    private void saveDefaultLanguages(File languagesFolder) {
+    private void saveDefaultLanguages(@NotNull File languagesFolder) {
         String[] defaultLangs = {"USA", "BRA"};
         for (String lang : defaultLangs) {
             File langFile = new File(languagesFolder, lang + ".lang");
@@ -97,7 +97,7 @@ public final class LanguageManager {
      *
      * @param langFile The language file to load.
      */
-    private void loadLanguageFile(File langFile) {
+    private void loadLanguageFile(@NotNull File langFile) {
         String langCode = langFile.getName().replace(".lang", "");
         Properties props = new Properties();
         try (InputStreamReader reader = new InputStreamReader(new FileInputStream(langFile), StandardCharsets.UTF_8)) {
@@ -121,7 +121,8 @@ public final class LanguageManager {
      * @param message the message key to retrieve
      * @return the deserialized and cached message component, or a fallback if not found
      */
-    public Component getMessage(String language, String message) {
+    @NotNull
+    public Component getMessage(@NotNull String language, @NotNull String message) {
         return computedMessages
             .computeIfAbsent(language, k -> new HashMap<>())
             .computeIfAbsent(message, k -> mm.deserialize(getRawMessage(language, message)));
@@ -136,7 +137,8 @@ public final class LanguageManager {
      * @param placeholders the placeholders to resolve within the message
      * @return the deserialized message component with placeholders resolved, or a fallback if not found
      */
-    public Component getMessage(String language, String message, TagResolver... placeholders) {
+    @NotNull
+    public Component getMessage(@NotNull String language, @NotNull String message, @NotNull TagResolver... placeholders) {
         return mm.deserialize(getRawMessage(language, message), placeholders);
     }
 
@@ -149,7 +151,8 @@ public final class LanguageManager {
      * @param placeholders the placeholders to resolve within the message
      * @return the deserialized message component with resolved placeholders, localized to the player's language
      */
-    public Component getMessage(Player player, String message, TagResolver... placeholders) {
+    @NotNull
+    public Component getMessage(@NotNull Player player, @NotNull String message, @NotNull TagResolver... placeholders) {
         return getMessage(player.locale().getISO3Language(), message, placeholders);
     }
 
@@ -161,7 +164,8 @@ public final class LanguageManager {
      * @param message the message key to retrieve
      * @return the deserialized message component, localized to the player's language
      */
-    public Component getMessage(Player player, String message) {
+    @NotNull
+    public Component getMessage(@NotNull Player player, @NotNull String message) {
         return getMessage(player.locale().getISO3Language(), message);
     }
 
@@ -172,7 +176,7 @@ public final class LanguageManager {
      * @param player the player to whom the message will be sent
      * @param message the message key to retrieve and send
      */
-    public void sendMessage(Player player, String message) {
+    public void sendMessage(@NotNull Player player, @NotNull String message) {
         player.sendMessage(getMessage(player, message));
     }
 
@@ -184,7 +188,7 @@ public final class LanguageManager {
      * @param message the message key to retrieve and send
      * @param placeholders the placeholders to resolve within the message
      */
-    public void sendMessage(Player player, String message, TagResolver... placeholders) {
+    public void sendMessage(@NotNull Player player, @NotNull String message, @NotNull TagResolver... placeholders) {
         player.sendMessage(getMessage(player, message, placeholders));
     }
 
@@ -196,7 +200,8 @@ public final class LanguageManager {
      * @param message the message key to retrieve
      * @return the raw message string if found, or a default fallback message
      */
-    private String getRawMessage(String language, String message) {
+    @NotNull
+    private String getRawMessage(@NotNull String language, @NotNull String message) {
         return messages.getOrDefault(language, new HashMap<>()).getOrDefault(message, "Message not found");
     }
 }
