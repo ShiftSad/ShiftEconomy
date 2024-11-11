@@ -38,7 +38,7 @@ public class TopCommand {
                         return;
                     }
 
-                    if (range.getUpperBound() > 10000) {
+                    if (range.getUpperBound() > 1000) {
                         lang.sendMessage(sender, "player.top.error.numberbig");
                         return;
                     }
