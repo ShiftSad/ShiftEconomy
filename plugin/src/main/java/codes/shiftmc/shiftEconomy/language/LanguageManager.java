@@ -9,14 +9,12 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+import java.util.regex.Pattern;
 
 @Slf4j
 public final class LanguageManager {
@@ -28,7 +26,7 @@ public final class LanguageManager {
     private final Map<String, Map<String, Component>> computedMessages = new HashMap<>();
 
     private static final MiniMessage mm = MiniMessage.builder().build();
-
+    private static final Pattern VALID_KEY_PATTERN = Pattern.compile("^[a-zA-Z]+(\\.[a-zA-Z]+)*$");
 
     /**
      * Initializes the LanguageManager.
@@ -76,7 +74,7 @@ public final class LanguageManager {
      * @param languagesFolder The languages directory.
      */
     private void saveDefaultLanguages(@NotNull File languagesFolder) {
-        String[] defaultLangs = {"USA", "BRA"};
+        String[] defaultLangs = {"en_US", "pt_BR"};
         for (String lang : defaultLangs) {
             File langFile = new File(languagesFolder, lang + ".lang");
             if (!langFile.exists()) {
@@ -91,19 +89,44 @@ public final class LanguageManager {
     }
 
     /**
-     * Loads a single language file into the languages map.
+     * Loads a single language file into the messages map.
      *
      * @param langFile The language file to load.
      */
     private void loadLanguageFile(@NotNull File langFile) {
         String langCode = langFile.getName().replace(".lang", "");
-        Properties props = new Properties();
-        try (InputStreamReader reader = new InputStreamReader(new FileInputStream(langFile), StandardCharsets.UTF_8)) {
-            props.load(reader);
-            Map<String, String> msg = new HashMap<>();
-            for (String key : props.stringPropertyNames()) {
-                msg.put(key, props.getProperty(key));
+        Map<String, String> msg = new HashMap<>();
+
+        try (BufferedReader reader = new BufferedReader(new FileReader(langFile, StandardCharsets.UTF_8))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                line = line.trim();
+
+                // Ignore comments and empty lines
+                if (line.isEmpty() || line.startsWith("#")) {
+                    continue;
+                }
+
+                // Split the line on the first "=" character
+                int separatorIndex = line.indexOf("=");
+                if (separatorIndex == -1) {
+                    log.warn("Skipping invalid line (no '=' found): {}", line);
+                    continue;
+                }
+
+                String key = line.substring(0, separatorIndex).trim();
+                String value = line.substring(separatorIndex + 1).trim();
+
+                // Validate key against the regex pattern
+                if (!VALID_KEY_PATTERN.matcher(key).matches()) {
+                    log.warn("Skipping invalid key format: {}", key);
+                    continue;
+                }
+
+                // Store the key-value pair
+                msg.put(key, value);
             }
+
             messages.put(langCode, msg);
             log.info("Loaded language file: {}", langFile.getName());
         } catch (IOException e) {
