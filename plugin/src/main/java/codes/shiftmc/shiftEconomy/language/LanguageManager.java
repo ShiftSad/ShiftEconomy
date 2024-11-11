@@ -114,7 +114,9 @@ public final class LanguageManager {
         Map<String, String> msg = new HashMap<>();
 
         try (BufferedReader reader = new BufferedReader(new FileReader(langFile, StandardCharsets.UTF_8))) {
+            StringBuilder lineBuilder = new StringBuilder();
             String line;
+
             while ((line = reader.readLine()) != null) {
                 line = line.trim();
 
@@ -123,15 +125,26 @@ public final class LanguageManager {
                     continue;
                 }
 
+                // Concatenate lines ending with a backslash
+                if (line.endsWith("\\")) {
+                    lineBuilder.append(line, 0, line.length() - 1).append(" ");
+                    continue;
+                } else {
+                    lineBuilder.append(line);
+                }
+
+                String fullLine = lineBuilder.toString();
+                lineBuilder.setLength(0); // Reset for the next potential multi-line value
+
                 // Split the line on the first "=" character
-                int separatorIndex = line.indexOf("=");
+                int separatorIndex = fullLine.indexOf("=");
                 if (separatorIndex == -1) {
-                    log.warn("Skipping invalid line (no '=' found): {}", line);
+                    log.warn("Skipping invalid line (no '=' found): {}", fullLine);
                     continue;
                 }
 
-                String key = line.substring(0, separatorIndex).trim();
-                String value = line.substring(separatorIndex + 1).trim();
+                String key = fullLine.substring(0, separatorIndex).trim();
+                String value = fullLine.substring(separatorIndex + 1).trim();
 
                 // Validate key against the regex pattern
                 if (!VALID_KEY_PATTERN.matcher(key).matches()) {
@@ -149,7 +162,7 @@ public final class LanguageManager {
             log.error("Failed to load language file {} {}", langFile.getName(), e.getStackTrace());
         }
     }
-
+    
     /**
      * Retrieves a precomputed message component for a given language and message key.
      * If the component is not already cached, it deserializes and caches it before returning.
