@@ -8,6 +8,9 @@ import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.java.JavaPlugin;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -21,19 +24,20 @@ import java.util.Properties;
 @Slf4j
 public final class LanguageManager {
     private static LanguageManager instance;
-    private final ShiftEconomy plugin;
+    private final JavaPlugin plugin;
 
     private final Map<String, Map<String, String>> messages = new HashMap<>();
     private final Map<String, Map<String, Component>> computedMessages = new HashMap<>();
 
     private static final MiniMessage mm = MiniMessage.builder().build();
 
+
     /**
      * Initializes the LanguageManager.
      *
      * @param plugin The main plugin instance.
      */
-    private LanguageManager(ShiftEconomy plugin) {
+    private LanguageManager(JavaPlugin plugin) {
         this.plugin = plugin;
         var languages = new File(plugin.getDataFolder() + "/languages");
 
@@ -43,6 +47,31 @@ public final class LanguageManager {
         }
     }
 
+    /**
+     * Retrieves the current instance of the LanguageManager, if it has been initialized.
+     *
+     * @return the existing LanguageManager instance, or null if it has not been initialized
+     */
+    @Nullable
+    public static LanguageManager instance() {
+        return instance;
+    }
+
+    /**
+     * Initializes and retrieves the LanguageManager instance if it does not already exist.
+     * If an instance exists, it returns the existing instance.
+     *
+     * @param plugin the main plugin instance to use for initializing the LanguageManager
+     * @return the initialized LanguageManager instance, guaranteed to be non-null
+     */
+    @NotNull
+    public static LanguageManager instance(@NotNull JavaPlugin plugin) {
+        if (instance == null) {
+            instance = new LanguageManager(plugin);
+        }
+        return instance;
+    }
+    
     /**
      * Saves default language files from resources to the languages folder.
      *
