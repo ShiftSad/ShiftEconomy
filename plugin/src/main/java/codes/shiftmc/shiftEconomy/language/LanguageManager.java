@@ -76,9 +76,12 @@ public final class LanguageManager {
     * <p>
     * This is achieved by reinitializing the `LanguageManager` with the same plugin instance,
     * which causes it to re-execute the constructor, loading the language files again.
+    *
+    * @return A instance of itself
     */
-    public void reload() {
+    public LanguageManager reload() {
         instance = new LanguageManager(plugin);
+        return instance;
     }
 
     /**

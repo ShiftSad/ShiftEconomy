@@ -36,7 +36,7 @@ public class ReloadCommand {
 
     private void reloadLanguage(Audience audience, Player language) {
         var lang = LanguageManager.instance(plugin);
-        lang.reload();
+        lang = lang.reload();
 
         Component message;
         if (language == null) message = lang.getMessage("admin.reload.language.sucess");
