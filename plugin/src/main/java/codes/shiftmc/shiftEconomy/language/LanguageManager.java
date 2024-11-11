@@ -278,6 +278,16 @@ public final class LanguageManager {
         else return getMessage(message);
     }
 
+    /**
+     * Sends a localized message to the specified sender based on their optional locale,
+     * without any placeholders.
+     *
+     * @param sender the sender to whom the message will be sent
+     * @param message the message key to retrieve and send
+     */
+    public void sendMessage(@NotNull CommandSender sender, @NotNull String message) {
+        sender.sendMessage(getMessage(sender, message));
+    }
 
     /**
      * Sends a localized message to the specified player based on their locale,

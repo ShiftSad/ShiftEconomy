@@ -44,8 +44,8 @@ public class MoneyCommand {
                 .executes((sender, arguments) -> {
                     var target = arguments.getOptionalByArgument(playerArg);
                     target.ifPresentOrElse(
-                        offlinePlayer -> displayBalance(sender, "en_US", offlinePlayer.getUniqueId()),
-                        () -> sender.sendMessage(lang.getMessage("player.balance.missing"))
+                        offlinePlayer -> displayBalance(sender, LanguageManager.DEFAULT_LANGUAGE, offlinePlayer.getUniqueId()),
+                        () -> lang.sendMessage(sender, "player.balance.missing")
                     );
                 })
                 .register();

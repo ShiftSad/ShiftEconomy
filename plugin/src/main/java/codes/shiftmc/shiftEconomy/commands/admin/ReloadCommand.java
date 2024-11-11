@@ -3,9 +3,7 @@ package codes.shiftmc.shiftEconomy.commands.admin;
 import codes.shiftmc.shiftEconomy.language.LanguageManager;
 import dev.jorel.commandapi.CommandAPICommand;
 import lombok.AllArgsConstructor;
-import net.kyori.adventure.audience.Audience;
-import net.kyori.adventure.text.Component;
-import org.bukkit.entity.Player;
+import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
 
 @AllArgsConstructor
@@ -17,31 +15,21 @@ public class ReloadCommand {
         return new CommandAPICommand("reload")
                 .withSubcommand(language())
                 .executes((sender, args) -> {
-                    reloadLanguage(sender, null);
-                })
-                .executesPlayer(((sender, args) -> {
-                    reloadLanguage(sender, sender);
-                }));
+                    reloadLanguage(sender);
+                });
     }
 
     public CommandAPICommand language() {
         return new CommandAPICommand("language")
                 .executes((sender, args) -> {
-                    reloadLanguage(sender, null);
-                })
-                .executesPlayer(((sender, args) -> {
-                    reloadLanguage(sender, sender);
-                }));
+                    reloadLanguage(sender);
+                });
     }
 
-    private void reloadLanguage(Audience audience, Player language) {
+    private void reloadLanguage(CommandSender sender) {
         var lang = LanguageManager.instance(plugin);
         lang = lang.reload();
 
-        Component message;
-        if (language == null) message = lang.getMessage("admin.reload.language.sucess");
-        else message = lang.getMessage(language, "admin.reload.language.sucess");
-
-        audience.sendMessage(message);
+        lang.sendMessage(sender, "admin.reload.language.sucess");
     }
 }
