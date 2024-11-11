@@ -4,6 +4,8 @@ import codes.shiftmc.shiftEconomy.ShiftEconomy;
 import lombok.extern.slf4j.Slf4j;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.bukkit.Bukkit;
 
 import java.io.File;
@@ -79,5 +81,44 @@ public final class LanguageManager {
         } catch (IOException e) {
             log.error("Failed to load language file {} {}", langFile.getName(), e.getStackTrace());
         }
+    }
+
+    /**
+     * Retrieves a precomputed message component for a given language and message key.
+     * If the component is not already cached, it deserializes and caches it before returning.
+     *
+     * @param language the language code for the message
+     * @param message the message key to retrieve
+     * @return the deserialized and cached message component, or a fallback if not found
+     */
+    public Component getMessage(String language, String message) {
+        return computedMessages
+            .computeIfAbsent(language, k -> new HashMap<>())
+            .computeIfAbsent(message, k -> mm.deserialize(getRawMessage(language, message)));
+    }
+
+    /**
+     * Retrieves a message component for a given language and message key,
+     * with additional placeholders to resolve.
+     *
+     * @param language the language code for the message
+     * @param message the message key to retrieve
+     * @param placeholders the placeholders to resolve within the message
+     * @return the deserialized message component with placeholders resolved, or a fallback if not found
+     */
+    public Component getMessage(String language, String message, TagResolver... placeholders) {
+        return mm.deserialize(getRawMessage(language, message), placeholders);
+    }
+
+    /**
+     * Retrieves the raw message string for a given language and message key.
+     * If the language or message key is not found, returns a default fallback message.
+     *
+     * @param language the language code for the message
+     * @param message the message key to retrieve
+     * @return the raw message string if found, or a default fallback message
+     */
+    private String getRawMessage(String language, String message) {
+        return messages.getOrDefault(language, new HashMap<>()).getOrDefault(message, "Message not found");
     }
 }
