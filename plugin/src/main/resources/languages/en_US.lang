@@ -1,8 +1,8 @@
 # English Language files.
 # All messages are formated as MiniMessages.
 
-# Most of the time, all usable placeholders, are already present in an image,
-# unless outherwise told.
+# Most of the time, all usable placeholders, are already present in the
+# default message, unless otherwise told.
 # You can create then thorough a webui: https://webui.advntr.dev/
 
 generic.error=<red>Something went terribly wrong

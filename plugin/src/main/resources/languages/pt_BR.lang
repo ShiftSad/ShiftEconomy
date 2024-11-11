@@ -1,10 +1,23 @@
-# Arquivos de idioma em inglês.
-# Todas as mensagens são formatadas como MiniMessages.
+# Arquivo de linguagem em Português Brasileiro.
+# Todas as mensagens estão formatadas como MiniMessages.
 
-# Você pode criá-las através de uma interface web: https://webui.advntr.dev/
+# Na maioria das vezes, todos os placeholders utilizáveis já estão presentes na
+# mensagem padrão, a menos que indicado de outra forma.
+# Você pode criá-los através de uma webui: https://webui.advntr.dev/
 
-generic.error=<red>Algo deu terrivelmente errado
-generic.error.stacktrace=<red>Algo deu terrivelmente errado: <stacktrace>
+generic.error=<red>Algo deu muito errado
+generic.error.stacktrace=<red>Algo deu muito errado: <stacktrace>
 
-player.balance=<green>O jogador <name> tem <gold><balance>$</gold></green>
+player.balance=<green>Jogador <name> possui <gold><balance>$</gold></green>
 player.balance.missing=<red>Saldo não encontrado para o jogador
+
+player.top.header=<br><green>TOP 10 jogadores mais ricos<br>
+player.top.footer=<green><click:run_command:'/money top <back_upper>..<back_lower>'><<</click> | <click:run_command:'/money top <forward_lower>..<forward_upper>'>>></click>
+player.top.elements=<green><position>. <player_name> - <balance>
+player.top.position=<number>º
+player.top.missing=Vazio
+player.top.error.big=<red>ERRO: Você não pode visualizar mais de 15 jogadores de uma vez.
+player.top.error.negative=<red>ERRO: Você não pode visualizar um top negativo.
+player.top.error.numberbig=<red>ERRO: Número muito grande.
+
+admin.reload.language.sucess=<green>Linguagens recarregadas com sucesso
