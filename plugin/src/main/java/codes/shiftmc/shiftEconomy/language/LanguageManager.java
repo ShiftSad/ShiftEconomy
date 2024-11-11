@@ -69,6 +69,18 @@ public final class LanguageManager {
     }
     
     /**
+    * Reloads the language files and reinitializes the LanguageManager instance.
+    * This method clears the existing data and loads fresh data from the language files,
+    * effectively reloading the language resources in case any updates were made to them.
+    * <p>
+    * This is achieved by reinitializing the `LanguageManager` with the same plugin instance,
+    * which causes it to re-execute the constructor, loading the language files again.
+    */
+    public void reload() {
+        instance = new LanguageManager(plugin);
+    }
+
+    /**
      * Saves default language files from resources to the languages folder.
      *
      * @param languagesFolder The languages directory.
@@ -149,6 +161,34 @@ public final class LanguageManager {
             .computeIfAbsent(language, k -> new HashMap<>())
             .computeIfAbsent(message, k -> mm.deserialize(getRawMessage(languageTemp, message)));
     }
+
+    /**
+     * Retrieves a precomputed message component for a given language and message key.
+     * If the component is not already cached, it deserializes and caches it before returning.
+     *
+     * @param message the message key to retrieve
+     * @return the deserialized and cached message component, or a fallback if not found
+     */
+    @NotNull
+    public Component getMessage(@NotNull String message) {
+        return computedMessages
+            .computeIfAbsent(DEFAULT_LANGUAGE, k -> new HashMap<>())
+            .computeIfAbsent(message, k -> mm.deserialize(getRawMessage(DEFAULT_LANGUAGE, message)));
+    }
+
+    /**
+     * Retrieves a message component for a given language and message key,
+     * with additional placeholders to resolve.
+     *
+     * @param message the message key to retrieve
+     * @param placeholders the placeholders to resolve within the message
+     * @return the deserialized message component with placeholders resolved, or a fallback if not found
+     */
+    @NotNull
+    public Component getMessage(@NotNull String message, @NotNull TagResolver... placeholders) {
+        return mm.deserialize(getRawMessage(DEFAULT_LANGUAGE, message), placeholders);
+    }
+
 
     /**
      * Retrieves a message component for a given language and message key,
