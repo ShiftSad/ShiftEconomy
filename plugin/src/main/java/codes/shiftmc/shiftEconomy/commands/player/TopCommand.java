@@ -8,6 +8,7 @@ import dev.jorel.commandapi.CommandAPICommand;
 import dev.jorel.commandapi.arguments.IntegerRangeArgument;
 import dev.jorel.commandapi.wrappers.IntegerRange;
 import lombok.AllArgsConstructor;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -15,6 +16,8 @@ import org.bukkit.plugin.java.JavaPlugin;
 public class TopCommand {
 
     private final UserService userService;
+
+    private static final MiniMessage mm = MiniMessage.builder().build();
 
     public CommandAPICommand get() {
         return new CommandAPICommand( "top")
@@ -58,12 +61,13 @@ public class TopCommand {
                                     );
                                 }
 
-                                lang.sendMessage(sender, "player.top.footer",
-                                        Placeholder.unparsed("back_lower", Math.max(range.getUpperBound() - 10, 10) + ""),
-                                        Placeholder.unparsed("back_upper", Math.max(range.getLowerBound() - 10, 0) + ""),
-                                        Placeholder.unparsed("forward_lower", range.getLowerBound() + 10 + ""),
-                                        Placeholder.unparsed("forward_upper", range.getUpperBound() + 10 + "")
-                                );
+                                var footer = lang.getRawMessage(sender, "player.top.footer")
+                                        .replace("<back_lower>", Math.max(range.getUpperBound() - 10, 10) + "")
+                                        .replace("<back_upper>", Math.max(range.getLowerBound() - 10, 0) + "")
+                                        .replace("<forward_lower>", range.getLowerBound() + 10 + "")
+                                        .replace("<forward_upper>", range.getUpperBound() + 10 + "");
+
+                                sender.sendMessage(mm.deserialize(footer));
                             })
                             .subscribe();
                 });
