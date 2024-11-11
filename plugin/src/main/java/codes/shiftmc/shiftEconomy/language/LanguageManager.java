@@ -7,6 +7,7 @@ import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -108,6 +109,54 @@ public final class LanguageManager {
      */
     public Component getMessage(String language, String message, TagResolver... placeholders) {
         return mm.deserialize(getRawMessage(language, message), placeholders);
+    }
+
+    /**
+     * Retrieves a localized message component for the specified player and message key,
+     * resolving placeholders as specified.
+     *
+     * @param player the player whose locale is used to determine the language
+     * @param message the message key to retrieve
+     * @param placeholders the placeholders to resolve within the message
+     * @return the deserialized message component with resolved placeholders, localized to the player's language
+     */
+    public Component getMessage(Player player, String message, TagResolver... placeholders) {
+        return getMessage(player.locale().getISO3Language(), message, placeholders);
+    }
+
+    /**
+     * Retrieves a localized message component for the specified player and message key,
+     * without any placeholders.
+     *
+     * @param player the player whose locale is used to determine the language
+     * @param message the message key to retrieve
+     * @return the deserialized message component, localized to the player's language
+     */
+    public Component getMessage(Player player, String message) {
+        return getMessage(player.locale().getISO3Language(), message);
+    }
+
+    /**
+     * Sends a localized message to the specified player based on their locale,
+     * without any placeholders.
+     *
+     * @param player the player to whom the message will be sent
+     * @param message the message key to retrieve and send
+     */
+    public void sendMessage(Player player, String message) {
+        player.sendMessage(getMessage(player, message));
+    }
+
+    /**
+     * Sends a localized message to the specified player based on their locale,
+     * with placeholders resolved.
+     *
+     * @param player the player to whom the message will be sent
+     * @param message the message key to retrieve and send
+     * @param placeholders the placeholders to resolve within the message
+     */
+    public void sendMessage(Player player, String message, TagResolver... placeholders) {
+        player.sendMessage(getMessage(player, message, placeholders));
     }
 
     /**
