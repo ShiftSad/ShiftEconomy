@@ -29,6 +29,7 @@ dependencies {
     implementation("org.mongodb:mongodb-driver-reactivestreams:5.2.0")
     implementation("io.projectreactor:reactor-core:3.6.10")
     implementation("io.lettuce:lettuce-core:6.5.0.RC2")
+    implementation("io.asyncer:r2dbc-mysql:1.2.0")
 
     compileOnly("org.projectlombok:lombok:1.18.34")
     annotationProcessor("org.projectlombok:lombok:1.18.34")

@@ -11,6 +11,8 @@ import org.bukkit.OfflinePlayer;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 
+import java.util.UUID;
+
 @AllArgsConstructor
 public class VaultEconomyHook extends EconomyWrapper {
 
@@ -63,7 +65,7 @@ public class VaultEconomyHook extends EconomyWrapper {
                         .publishOn(Schedulers.boundedElastic())
                         .map(updatedUser -> {
                             // Record transaction
-                            transactionService.createTransaction(new Transaction(null, user.getUUID(), amount, System.currentTimeMillis())).subscribe();
+                            transactionService.createTransaction(new Transaction(UUID.randomUUID(),null, user.getUUID(), amount, System.currentTimeMillis())).subscribe();
                             return new EconomyResponse(amount, updatedUser.getBalance(), EconomyResponse.ResponseType.SUCCESS, null);
                         });
             }
@@ -78,7 +80,7 @@ public class VaultEconomyHook extends EconomyWrapper {
                         .publishOn(Schedulers.boundedElastic())
                         .map(updatedUser -> {
                             // Record transaction
-                            transactionService.createTransaction(new Transaction(null, user.getUUID(), amount, System.currentTimeMillis())).subscribe();
+                            transactionService.createTransaction(new Transaction(UUID.randomUUID(),null, user.getUUID(), amount, System.currentTimeMillis())).subscribe();
                             return new EconomyResponse(amount, updatedUser.getBalance(), EconomyResponse.ResponseType.SUCCESS, null);
                         }))
                 .defaultIfEmpty(new EconomyResponse(0, 0, EconomyResponse.ResponseType.FAILURE, "Account not found"))

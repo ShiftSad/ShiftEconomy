@@ -4,6 +4,7 @@ import codes.shiftmc.common.cache.LocalTypeCache;
 import codes.shiftmc.common.cache.RedisTypeCache;
 import codes.shiftmc.common.cache.TypeCache;
 import codes.shiftmc.common.connectors.MongoConnector;
+import codes.shiftmc.common.connectors.MySQLConnector;
 import codes.shiftmc.common.model.UserData;
 import codes.shiftmc.common.model.enums.CachingMethod;
 import codes.shiftmc.common.model.enums.StorageMethod;
@@ -11,6 +12,8 @@ import codes.shiftmc.common.repository.TransactionRepository;
 import codes.shiftmc.common.repository.UserRepository;
 import codes.shiftmc.common.repository.impl.MongoTransactionRepository;
 import codes.shiftmc.common.repository.impl.MongoUserRepository;
+import codes.shiftmc.common.repository.impl.MySQLTransactionRepository;
+import codes.shiftmc.common.repository.impl.MySQLUserRepository;
 import codes.shiftmc.common.service.TransactionService;
 import codes.shiftmc.common.service.UserService;
 import codes.shiftmc.shiftEconomy.commands.MoneyCommand;
@@ -68,6 +71,13 @@ public final class ShiftEconomy extends JavaPlugin {
                 var mongoConnector = new MongoConnector(dataSource.mongodbConnectionUri(), dataSource.database());
                 userRepository = new MongoUserRepository(mongoConnector.getMongoDatabase());
                 transactionRepository = new MongoTransactionRepository(mongoConnector.getMongoDatabase());
+            }
+            case MYSQL -> {
+                var host = dataSource.address().split(":")[0];
+                var port = Integer.parseInt(dataSource.address().split(":")[1]);
+                var mysqlConnector = new MySQLConnector(host, port, dataSource.database(), dataSource.username(), dataSource.password());
+                userRepository = new MySQLUserRepository(mysqlConnector.getConnectionFactory());
+                transactionRepository = new MySQLTransactionRepository(mysqlConnector.getConnectionFactory());
             }
             default -> throw new IllegalStateException("Not yet implemented: " + dataSource.storageMethod());
         }

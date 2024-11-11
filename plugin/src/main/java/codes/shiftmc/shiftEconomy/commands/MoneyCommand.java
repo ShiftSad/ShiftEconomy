@@ -8,6 +8,7 @@ import dev.jorel.commandapi.CommandAPICommand;
 import dev.jorel.commandapi.arguments.DoubleArgument;
 import dev.jorel.commandapi.arguments.OfflinePlayerArgument;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
@@ -16,6 +17,7 @@ import reactor.core.publisher.Mono;
 
 import java.util.UUID;
 
+@Slf4j
 @AllArgsConstructor
 public class MoneyCommand {
 
@@ -94,10 +96,10 @@ public class MoneyCommand {
             return userService.findByUuid(targetUUID)
                     .flatMap(targetData -> userService.updateBalance(targetUUID, targetData.getBalance() + amount))
                     .then(transactionService.createTransaction(
-                            new Transaction(null, targetUUID, amount, System.currentTimeMillis()))
+                            new Transaction(UUID.randomUUID(),null, targetUUID, amount, System.currentTimeMillis()))
                     )
                     .then(Mono.just(mm.deserialize("<green>Transaction successful! " + NumberFormatter.format(amount) + " transferred to " + target + ".</green>")))
-                    .onErrorResume(e -> Mono.just(mm.deserialize("<red>Error processing transaction.</red>")));
+                    .onErrorResume(e -> Mono.just(mm.deserialize("<red>Error processing transaction.</red> " + e.getMessage())));
         }
 
         // Check sender's balance and transfer if sufficient
@@ -112,11 +114,11 @@ public class MoneyCommand {
                             .then(userService.findByUuid(targetUUID)
                                     .flatMap(targetData -> userService.updateBalance(targetUUID, targetData.getBalance() + amount)))
                             .then(transactionService.createTransaction(
-                                    new Transaction(senderUUID, targetUUID, amount, System.currentTimeMillis()))
+                                    new Transaction(UUID.randomUUID(),senderUUID, targetUUID, amount, System.currentTimeMillis()))
                             )
                             .then(Mono.just(mm.deserialize("<green>Transaction successful! " + NumberFormatter.format(amount) + " transferred to " + target + ".</green>")));
                 })
-                .onErrorResume(e -> Mono.just(mm.deserialize("<red>Error processing transaction.</red>")));
+                .onErrorResume(e -> Mono.just(mm.deserialize("<red>Error processing transaction.</red> " + e.getMessage())));
     }
 
     private Mono<Component> checkMoney(OfflinePlayer player) {
