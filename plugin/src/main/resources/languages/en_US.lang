@@ -8,3 +8,5 @@ generic.error.stacktrace=<red>Something went terribly wrong: <stacktrace>
 
 player.balance=<green>Player <name> has <gold><balance>$</gold></green>
 player.balance.missing=<red>Balance not found for player
+
+admin.reload.language.sucess=<green>Reload languages successfully

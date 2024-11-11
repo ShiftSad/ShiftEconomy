@@ -19,6 +19,7 @@ import codes.shiftmc.common.service.UserService;
 import codes.shiftmc.shiftEconomy.commands.MoneyCommand;
 import codes.shiftmc.shiftEconomy.configuration.CacheSource;
 import codes.shiftmc.shiftEconomy.configuration.DataSource;
+import codes.shiftmc.shiftEconomy.language.LanguageManager;
 import codes.shiftmc.shiftEconomy.listeners.AsyncPlayerPreLoginListener;
 import codes.shiftmc.shiftEconomy.vault.VaultEconomyHook;
 import io.lettuce.core.RedisClient;
@@ -43,6 +44,8 @@ public final class ShiftEconomy extends JavaPlugin {
 
     @Override
     public void onEnable() {
+        LanguageManager.instance(this);
+        
         saveDefaultConfig();
         loadConfigurations();
         connectDataSources();
@@ -58,7 +61,8 @@ public final class ShiftEconomy extends JavaPlugin {
         // Register commands
         new MoneyCommand(
                 userService,
-                transactionService
+                transactionService,
+                this
         ).register();
 
         // Register listeners

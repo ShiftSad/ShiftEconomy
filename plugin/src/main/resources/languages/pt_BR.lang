@@ -1,0 +1,10 @@
+# Arquivos de idioma em inglês.
+# Todas as mensagens são formatadas como MiniMessages.
+
+# Você pode criá-las através de uma interface web: https://webui.advntr.dev/
+
+generic.error=<red>Algo deu terrivelmente errado
+generic.error.stacktrace=<red>Algo deu terrivelmente errado: <stacktrace>
+
+player.balance=<green>O jogador <name> tem <gold><balance>$</gold></green>
+player.balance.missing=<red>Saldo não encontrado para o jogador

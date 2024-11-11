@@ -8,6 +8,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.UnknownNullability;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -48,7 +49,7 @@ public final class LanguageManager {
      *
      * @return the existing LanguageManager instance, or null if it has not been initialized
      */
-    @Nullable
+    @UnknownNullability
     public static LanguageManager instance() {
         return instance;
     }
