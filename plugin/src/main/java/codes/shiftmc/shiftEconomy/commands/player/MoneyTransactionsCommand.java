@@ -1,4 +1,4 @@
-package codes.shiftmc.shiftEconomy.commands;
+package codes.shiftmc.shiftEconomy.commands.player;
 
 import codes.shiftmc.common.model.Transaction;
 import codes.shiftmc.common.service.TransactionService;

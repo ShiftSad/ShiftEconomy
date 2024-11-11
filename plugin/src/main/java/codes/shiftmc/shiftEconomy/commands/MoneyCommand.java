@@ -4,6 +4,7 @@ import codes.shiftmc.common.service.TransactionService;
 import codes.shiftmc.common.service.UserService;
 import codes.shiftmc.common.util.NumberFormatter;
 import codes.shiftmc.shiftEconomy.commands.admin.AdminCommand;
+import codes.shiftmc.shiftEconomy.commands.player.TopCommand;
 import codes.shiftmc.shiftEconomy.language.LanguageManager;
 import dev.jorel.commandapi.CommandAPICommand;
 import dev.jorel.commandapi.arguments.OfflinePlayerArgument;
@@ -35,7 +36,10 @@ public class MoneyCommand {
         );
 
         new CommandAPICommand("money")
-                .withSubcommand(new AdminCommand(plugin).get())
+                .withSubcommands(
+                        new AdminCommand(plugin).get(),
+                        new TopCommand(userService).get()
+                )
                 .withOptionalArguments(new OfflinePlayerArgument("player"))
                 .executesPlayer((player, arguments) -> {
                     var target = arguments.getOptionalByArgument(playerArg).orElse(player);
