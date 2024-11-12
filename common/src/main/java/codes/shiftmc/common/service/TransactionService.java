@@ -39,7 +39,7 @@ public class TransactionService {
      * @param uuid The UUID of the user.
      * @return A Flux emitting each Transaction involving the user.
      */
-    public Flux<Transaction> getTransactionsByUserWithBounds(UUID uuid, double lowerBound, double upperBound) {
+    public Flux<Transaction> getTransactionsByUser(UUID uuid, int lowerBound, int upperBound) {
         return transactionRepository.findByUserWithAmountBounds(uuid, lowerBound, upperBound);
     }
 

@@ -45,7 +45,7 @@ public class MySQLTransactionRepository implements TransactionRepository {
     }
 
     @Override
-    public Flux<Transaction> findByUserWithAmountBounds(UUID uuid, double lowerBound, double upperBound) {
+    public Flux<Transaction> findByUserWithAmountBounds(UUID uuid, int lowerBound, int upperBound) {
         return Mono.from(connectionFactory.create())
                 .flatMapMany(connection ->
                         Flux.from(connection.createStatement("SELECT * FROM transactions WHERE (senderUUID = ? OR receiverUUID = ?) AND amount >= ? AND amount <= ?")

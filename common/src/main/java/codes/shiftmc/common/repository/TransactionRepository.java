@@ -33,7 +33,7 @@ public interface TransactionRepository {
      * @param upperBound The upper bound of the transaction amount.
      * @return A Flux emitting each Transaction involving the user within the specified bounds.
      */
-    Flux<Transaction> findByUserWithAmountBounds(UUID uuid, double lowerBound, double upperBound);
+    Flux<Transaction> findByUserWithAmountBounds(UUID uuid, int lowerBound, int upperBound);
 
     /**
      * Finds all transactions for a given receiver UUID.
