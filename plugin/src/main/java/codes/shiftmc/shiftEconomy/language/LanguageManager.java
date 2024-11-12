@@ -20,7 +20,7 @@ import java.util.regex.Pattern;
 
 @Slf4j
 public final class LanguageManager {
-    public static final String DEFAULT_LANGUAGE = "en_US";
+    public static final String DEFAULT_LANGUAGE = "en-US";
     private static LanguageManager instance;
     private final JavaPlugin plugin;
 
@@ -91,7 +91,7 @@ public final class LanguageManager {
      * @param languagesFolder The languages directory.
      */
     private void saveDefaultLanguages(@NotNull File languagesFolder) {
-        String[] defaultLangs = {"en_US", "pt_BR"};
+        String[] defaultLangs = {"en-US", "pt-BR"};
         for (String lang : defaultLangs) {
             File langFile = new File(languagesFolder, lang + ".lang");
             if (!langFile.exists()) {
