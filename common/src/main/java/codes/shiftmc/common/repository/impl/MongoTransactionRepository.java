@@ -34,6 +34,20 @@ public class MongoTransactionRepository implements TransactionRepository {
     }
 
     @Override
+    public Flux<Transaction> findByUserWithAmountBounds(UUID uuid, double lowerBound, double upperBound) {
+        return Flux.from(transactionCollection.find(
+                Filters.and(
+                        Filters.or(
+                                Filters.eq("senderUUID", uuid),
+                                Filters.eq("receiverUUID", uuid)
+                        ),
+                        Filters.gte("amount", lowerBound),
+                        Filters.lte("amount", upperBound)
+                )
+        ));
+    }
+
+    @Override
     public Flux<Transaction> findByReceiverUuid(UUID receiverUuid) {
         return Flux.from(transactionCollection.find(Filters.eq("receiverUUID", receiverUuid)));
     }

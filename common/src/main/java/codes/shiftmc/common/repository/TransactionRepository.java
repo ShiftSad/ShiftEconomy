@@ -25,6 +25,17 @@ public interface TransactionRepository {
     Flux<Transaction> findByUser(UUID uuid);
 
     /**
+     * Finds all transactions where the specified user is either the sender or receiver
+     * and the transaction amount is within the specified bounds.
+     *
+     * @param uuid The UUID of the user.
+     * @param lowerBound The lower bound of the transaction amount.
+     * @param upperBound The upper bound of the transaction amount.
+     * @return A Flux emitting each Transaction involving the user within the specified bounds.
+     */
+    Flux<Transaction> findByUserWithAmountBounds(UUID uuid, double lowerBound, double upperBound);
+
+    /**
      * Finds all transactions for a given receiver UUID.
      *
      * @param receiverUuid The UUID of the transaction receiver.

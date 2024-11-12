@@ -34,6 +34,17 @@ public class TransactionService {
     }
 
     /**
+     * Retrieves all transactions where the specified user is either the sender or receiver.
+     *
+     * @param uuid The UUID of the user.
+     * @return A Flux emitting each Transaction involving the user.
+     */
+    public Flux<Transaction> getTransactionsByUserWithBounds(UUID uuid, double lowerBound, double upperBound) {
+        return transactionRepository.findByUserWithAmountBounds(uuid, lowerBound, upperBound);
+    }
+
+
+    /**
      * Retrieves all transactions received by a given user.
      *
      * @param receiverUuid The UUID of the transaction receiver.
