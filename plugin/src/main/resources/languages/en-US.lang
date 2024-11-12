@@ -16,8 +16,16 @@ player.top.footer=<br><green><click:run_command:'/money top <back_upper>..<back_
 player.top.elements=<green><position>. <player_name> - <balance>
 player.top.position=<number>º
 player.top.missing=Empty
-player.top.error.big=<red>ERROR: You cannot view more than 15 players at once.
-player.top.error.negative=<red>ERROR: You cannot view a negative top.
-player.top.error.numberbig=<red>ERROR: Number is way to big.
+
+player.transactions.empty=<red>No transactions found :(
+player.transactions.header=<br><green>Transactions History<br>
+player.transactions.footer=<br><green><click:run_command:'/money transactions <back_upper>..<back_lower>'><<</click> | <click:run_command:'/money top <forward_lower>..<forward_upper>'>>></click>
+player.transactions.receive=<green> + Você recebeu <amount> de <sender>
+player.transactions.send=<red> - Você pagou <amount> para <receiver>
+
+# Errors related to integer range arguments
+player.range.error.big=<red>ERROR: You cannot view more than 15 players at once.
+player.range.error.negative=<red>ERROR: You cannot view a negative place.
+player.range.error.numberbig=<red>ERROR: Number is way to big.
 
 admin.reload.language.sucess=<green>Reload languages successfully

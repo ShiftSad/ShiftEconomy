@@ -3,6 +3,7 @@ package codes.shiftmc.common.repository.impl;
 import codes.shiftmc.common.model.Transaction;
 import codes.shiftmc.common.repository.TransactionRepository;
 import com.mongodb.client.model.Filters;
+import com.mongodb.client.model.Sorts;
 import com.mongodb.reactivestreams.client.MongoCollection;
 import com.mongodb.reactivestreams.client.MongoDatabase;
 import reactor.core.publisher.Flux;
@@ -36,15 +37,14 @@ public class MongoTransactionRepository implements TransactionRepository {
     @Override
     public Flux<Transaction> findByUserWithAmountBounds(UUID uuid, int lowerBound, int upperBound) {
         return Flux.from(transactionCollection.find(
-                Filters.and(
-                        Filters.or(
-                                Filters.eq("senderUUID", uuid),
-                                Filters.eq("receiverUUID", uuid)
-                        ),
-                        Filters.gte("amount", lowerBound),
-                        Filters.lte("amount", upperBound)
-                )
-        ));
+                Filters.or(
+                        Filters.eq("senderUUID", uuid),
+                        Filters.eq("receiverUUID", uuid)
+                ))
+                .sort(Sorts.descending("timestamp"))
+                .skip(lowerBound)
+                .limit(upperBound - lowerBound)
+        );
     }
 
     @Override

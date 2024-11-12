@@ -10,6 +10,7 @@ import dev.jorel.commandapi.wrappers.IntegerRange;
 import lombok.AllArgsConstructor;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
+import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
 
 @AllArgsConstructor
@@ -27,21 +28,7 @@ public class TopCommand {
 
                     IntegerRange range = (IntegerRange) args.getOptional("range")
                             .orElse(new IntegerRange(0, 10));
-
-                    if (range.getUpperBound() - range.getLowerBound() > 15) {
-                        lang.sendMessage(sender,  "player.top.error.big");
-                        return;
-                    }
-
-                    if (range.getLowerBound() < 0 || range.getUpperBound() < 0) {
-                        lang.sendMessage(sender,  "player.top.error.negative");
-                        return;
-                    }
-
-                    if (range.getUpperBound() > 1000) {
-                        lang.sendMessage(sender, "player.top.error.numberbig");
-                        return;
-                    }
+                    if (!checkArgument(range, lang, sender)) return;
 
                     var userFlux = userService.findTopUsers(range.getLowerBound(), range.getUpperBound());
                     userFlux.collectList()
@@ -71,5 +58,24 @@ public class TopCommand {
                             })
                             .subscribe();
                 });
+    }
+
+    public static boolean checkArgument(IntegerRange range, LanguageManager lang, CommandSender sender) {
+        if (range.getUpperBound() - range.getLowerBound() > 15) {
+            lang.sendMessage(sender,  "player.range.error.big");
+            return false;
+        }
+
+        if (range.getLowerBound() < 0 || range.getUpperBound() < 0) {
+            lang.sendMessage(sender,  "player.range.error.negative");
+            return false;
+        }
+
+        if (range.getUpperBound() > 1000) {
+            lang.sendMessage(sender, "player.range.error.numberbig");
+            return false;
+        }
+
+        return true;
     }
 }
