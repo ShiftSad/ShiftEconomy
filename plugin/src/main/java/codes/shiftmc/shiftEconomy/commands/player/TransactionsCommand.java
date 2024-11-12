@@ -36,17 +36,18 @@ public class TransactionsCommand {
                             .orElse(new IntegerRange(0, 10));
                     if (!TopCommand.checkArgument(range, lang, sender)) return;
 
+                    lang.sendMessage(sender,  "player.transactions.header");
                     var transactionsFlux = transactionService.getTransactionsByUser(sender.getUniqueId(), range.getLowerBound(), range.getUpperBound());
                     transactionsFlux.collectList()
                             .defaultIfEmpty(Collections.emptyList())
-                            .doOnNext(transactions -> {
+                            .flatMap(transactions -> {
                                 if (transactions.isEmpty()) {
                                     lang.sendMessage(sender, "player.transactions.empty");
-                                    return;
+                                    return Mono.empty();
                                 }
-                                
-                                lang.sendMessage(sender,  "player.transactions.header");
-
+                                return Mono.just(transactions);
+                            })
+                            .doOnNext(transactions -> {
                                 for (Transaction transaction : transactions) {
                                     UUID targetUUID = transaction.receiverUUID().equals(sender.getUniqueId())
                                             ? transaction.senderUUID()
