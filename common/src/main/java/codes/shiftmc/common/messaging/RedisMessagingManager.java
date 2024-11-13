@@ -22,7 +22,6 @@ public class RedisMessagingManager extends MessagingManager {
     private final StatefulRedisConnection<String, String> connection;
     private final StatefulRedisPubSubConnection<String, String> pubSubConnection;
     private final RedisPubSubReactiveCommands<String, String> reactiveCommands;
-    private final Set<PacketListener> listeners = new CopyOnWriteArraySet<>();
     private final Gson gson = new GsonBuilder()
             .registerTypeAdapter(ShiftPacket.class, new ShiftPacketTypeAdapter())
             .create();
@@ -43,16 +42,6 @@ public class RedisMessagingManager extends MessagingManager {
         connection.reactive().publish(CHANNEL_NAME, json).subscribe();
     }
 
-    @Override
-    public void addListener(PacketListener listener) {
-        listeners.add(listener);
-    }
-
-    @Override
-    public void removeListener(PacketListener listener) {
-        listeners.remove(listener);
-    }
-
     private void subscribeToChannel() {
         reactiveCommands.subscribe(CHANNEL_NAME).subscribe();
 
@@ -64,13 +53,11 @@ public class RedisMessagingManager extends MessagingManager {
     }
 
     private void handleIncomingMessage(String message) {
-        // Deserialize the JSON to ShiftPacket
-        ShiftPacket packet = gson.fromJson(message, ShiftPacket.class);
-        log.info(packet.toString());
-
-        // Notify all listeners
-        for (PacketListener listener : listeners) {
-            listener.onPacketReceived(packet);
+        try {
+            ShiftPacket packet = gson.fromJson(message, ShiftPacket.class);
+            if (packet != null) handleIncomingPacket(packet);
+        } catch (Exception e) {
+            log.error("Failed to process incoming packet: {}", message, e);
         }
     }
 

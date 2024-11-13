@@ -2,7 +2,12 @@ package codes.shiftmc.common.messaging;
 
 import codes.shiftmc.common.messaging.packet.ShiftPacket;
 
+import java.util.HashSet;
+import java.util.Set;
+
 public abstract class MessagingManager {
+
+    private final Set<PacketListener<? extends ShiftPacket>> listeners = new HashSet<>();
 
     /**
      * Sends a packet to the messaging system.
@@ -11,21 +16,32 @@ public abstract class MessagingManager {
     public abstract void sendPacket(ShiftPacket packet);
 
     /**
-     * Adds a listener for incoming packets.
+     * Adds a listener for a specific packet type.
      * @param listener The listener to add.
      */
-    public abstract void addListener(PacketListener listener);
+    public <T extends ShiftPacket> void addListener(PacketListener<T> listener) {
+        listeners.add(listener);
+    }
 
     /**
      * Removes a listener.
      * @param listener The listener to remove.
      */
-    public abstract void removeListener(PacketListener listener);
+    public void removeListener(PacketListener<? extends ShiftPacket> listener) {
+        listeners.remove(listener);
+    }
 
     /**
-     * Interface for packet listeners.
+     * Processes incoming packets and dispatches them to the correct listeners.
+     * @param packet The received packet.
      */
-    public interface PacketListener {
-        void onPacketReceived(ShiftPacket packet);
+    protected void handleIncomingPacket(ShiftPacket packet) {
+        for (PacketListener<? extends ShiftPacket> listener : listeners) {
+            if (listener.getPacketType().isInstance(packet)) {
+                @SuppressWarnings("unchecked")
+                PacketListener<ShiftPacket> typedListener = (PacketListener<ShiftPacket>) listener;
+                typedListener.onPacketReceived(packet);
+            }
+        }
     }
 }
