@@ -19,8 +19,8 @@ import java.util.UUID;
 @AllArgsConstructor
 public class PayCommand {
 
-    private final UserService userService;
     private final TransactionService transactionService;
+    private final UserService userService;
 
     public CommandAPICommand get() {
         return new CommandAPICommand("pay")

@@ -4,6 +4,7 @@ import codes.shiftmc.common.service.TransactionService;
 import codes.shiftmc.common.service.UserService;
 import codes.shiftmc.common.util.NumberFormatter;
 import codes.shiftmc.shiftEconomy.commands.admin.AdminCommand;
+import codes.shiftmc.shiftEconomy.commands.player.PayCommand;
 import codes.shiftmc.shiftEconomy.commands.player.TopCommand;
 import codes.shiftmc.shiftEconomy.commands.player.TransactionsCommand;
 import codes.shiftmc.shiftEconomy.language.LanguageManager;
@@ -38,7 +39,8 @@ public class MoneyCommand {
                 .withSubcommands(
                         new AdminCommand(plugin).get(),
                         new TopCommand(userService).get(),
-                        new TransactionsCommand(transactionService, userService).get()
+                        new TransactionsCommand(transactionService, userService).get(),
+                        new PayCommand(transactionService, userService).get()
                 )
                 .withOptionalArguments(new OfflinePlayerArgument("player"))
                 .executesPlayer((player, arguments) -> {
