@@ -29,8 +29,6 @@ public class MoneyCommand {
     private final TransactionService transactionService;
     private final JavaPlugin plugin;
 
-    private static final LanguageManager lang = LanguageManager.instance();
-
     public void register() {
         var playerArg = new OfflinePlayerArgument("player").replaceSafeSuggestions(
                 SafeSuggestions.suggest(info -> Bukkit.getOnlinePlayers().toArray(new Player[0]))
@@ -48,6 +46,7 @@ public class MoneyCommand {
                     displayBalance(player, player.locale().toLanguageTag(), target.getUniqueId());
                 })
                 .executes((sender, arguments) -> {
+                    LanguageManager lang = LanguageManager.instance();
                     var target = arguments.getOptionalByArgument(playerArg);
                     target.ifPresentOrElse(
                         offlinePlayer -> displayBalance(sender, LanguageManager.DEFAULT_LANGUAGE, offlinePlayer.getUniqueId()),
@@ -65,6 +64,7 @@ public class MoneyCommand {
      * @param targetUuid The UUID of the target player whose balance is requested.
      */
     private void displayBalance(Audience viewer, String language, UUID targetUuid) {
+        LanguageManager lang = LanguageManager.instance();
         userService.findByUuid(targetUuid)
                 .map(userData -> lang.getMessage(language, "player.balance",
                     Placeholder.unparsed("balance", NumberFormatter.format(userData.getBalance())),
