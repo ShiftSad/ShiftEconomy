@@ -26,6 +26,7 @@ player.transactions.send=<red> - Você pagou <amount> para <receiver>
 
 player.pay.sent=<green>Você enviou <amount> para <receiver>
 player.pay.received=<green>Você recebeu <amount> de <sender>
+player.pay.error.cant-send-to-self=<red>ERRO: Você não pode se mandar dinheiro
 
 # Erros relacionados a argumentos de intervalo de inteiros
 player.range.error.big=<red>ERRO: Você não pode ver mais de 15 jogadores de uma vez.

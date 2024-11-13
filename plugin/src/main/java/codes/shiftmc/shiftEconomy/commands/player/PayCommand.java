@@ -63,6 +63,11 @@ public class PayCommand {
             return;
         }
 
+        if (senderUUID.equals(receiver.getUniqueId().toString())) {
+            lang.sendMessage(sender, "player.pay.error.cant-send-to-self");
+            return;
+        }
+
         UUID a;
         if (Objects.equals(senderUUID, "server")) a = UUID.nameUUIDFromBytes(senderUUID.getBytes(StandardCharsets.UTF_8));
         else a = UUID.fromString(senderUUID);
