@@ -18,7 +18,6 @@ dependencies {
     implementation("io.projectreactor:reactor-core:3.6.10")
 
     // Mysql
-//    implementation("io.r2dbc:r2dbc-spi:1.0.0.RELEASE")
     implementation("io.asyncer:r2dbc-mysql:1.2.0")
 
     // Redis
@@ -30,4 +29,5 @@ dependencies {
 
     compileOnly("org.projectlombok:lombok:1.18.34")
     annotationProcessor("org.projectlombok:lombok:1.18.34")
+    implementation("org.jetbrains:annotations:24.0.0")
 }
