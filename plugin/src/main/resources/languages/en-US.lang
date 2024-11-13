@@ -9,7 +9,8 @@ generic.error=<red>Something went terribly wrong
 generic.error.stacktrace=<red>Something went terribly wrong: <stacktrace>
 
 player.balance=<green>Player <name> has <gold><balance>$</gold></green>
-player.balance.missing=<red>Balance not found for player
+player.balance.error.missing=<red>ERROR: Balance not found for player
+player.balance.error.not-enough=<red>ERROR: You don't have enough money
 
 player.top.header=<br><green>TOP 10 richest players<br>
 player.top.footer=<br><green><click:run_command:'/money top <back_upper>..<back_lower>'><<</click> | <click:run_command:'/money top <forward_lower>..<forward_upper>'>>></click>
@@ -23,9 +24,15 @@ player.transactions.footer=<br><green><click:run_command:'/money transactions <b
 player.transactions.receive=<green> + Você recebeu <amount> de <sender>
 player.transactions.send=<red> - Você pagou <amount> para <receiver>
 
+player.pay.sent=<green>You sent <amount> to <receiver>
+player.pay.received=<green>You received <amount> from <sender>
+
 # Errors related to integer range arguments
 player.range.error.big=<red>ERROR: You cannot view more than 15 players at once.
 player.range.error.negative=<red>ERROR: You cannot view a negative place.
 player.range.error.numberbig=<red>ERROR: Number is way to big.
+
+# Errors related to general commands
+player.command.error.invalid-arguments=<red> ERROR: The arguments provided are invalid.
 
 admin.reload.language.sucess=<green>Reload languages successfully

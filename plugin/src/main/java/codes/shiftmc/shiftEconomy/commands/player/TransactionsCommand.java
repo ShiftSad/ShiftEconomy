@@ -77,7 +77,8 @@ public class TransactionsCommand {
                                             .replace("<forward_upper>", range.getUpperBound() + 10 + "");
 
                                 sender.sendMessage(mm.deserialize(footer));
-                            });
+                            })
+                            .subscribe();
                 });
     }
 

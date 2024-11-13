@@ -42,15 +42,16 @@ public class MoneyCommand {
                 )
                 .withOptionalArguments(new OfflinePlayerArgument("player"))
                 .executesPlayer((player, arguments) -> {
+                    LanguageManager lang = LanguageManager.instance();
                     var target = arguments.getOptionalByArgument(playerArg).orElse(player);
-                    displayBalance(player, player.locale().toLanguageTag(), target.getUniqueId());
+                    displayBalance(player, player.locale().toLanguageTag(), target.getUniqueId(), lang);
                 })
                 .executes((sender, arguments) -> {
                     LanguageManager lang = LanguageManager.instance();
                     var target = arguments.getOptionalByArgument(playerArg);
                     target.ifPresentOrElse(
-                        offlinePlayer -> displayBalance(sender, LanguageManager.DEFAULT_LANGUAGE, offlinePlayer.getUniqueId()),
-                        () -> lang.sendMessage(sender, "player.balance.missing")
+                        offlinePlayer -> displayBalance(sender, LanguageManager.DEFAULT_LANGUAGE, offlinePlayer.getUniqueId(), lang),
+                        () -> lang.sendMessage(sender, "player.balance.error.missing")
                     );
                 })
                 .register();
@@ -63,14 +64,13 @@ public class MoneyCommand {
      * @param language Representation of the language.
      * @param targetUuid The UUID of the target player whose balance is requested.
      */
-    private void displayBalance(Audience viewer, String language, UUID targetUuid) {
-        LanguageManager lang = LanguageManager.instance();
+    private void displayBalance(Audience viewer, String language, UUID targetUuid, LanguageManager lang) {
         userService.findByUuid(targetUuid)
                 .map(userData -> lang.getMessage(language, "player.balance",
                     Placeholder.unparsed("balance", NumberFormatter.format(userData.getBalance())),
                     Placeholder.unparsed("name", userData.getUsername())
                 ))
-                .defaultIfEmpty(lang.getMessage(language, "player.balance.missing"))
+                .defaultIfEmpty(lang.getMessage(language, "player.balance.error.missing"))
                 .doOnError(error -> lang.getMessage(language, "generic.error.stacktrace",
                     Placeholder.unparsed("stacktrace", Arrays.toString(error.getStackTrace()))
                 ))
