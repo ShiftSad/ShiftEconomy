@@ -42,10 +42,6 @@ public final class ShiftEconomy extends JavaPlugin {
     private MessagingSource messagingSource;
 
     private MessagingManager messagingManager;
-    private TypeCache<UserData> userDataCache;
-    private UserRepository userRepository;
-    private TransactionRepository transactionRepository;
-
     private UserService userService;
     private TransactionService transactionService;
 
@@ -77,6 +73,8 @@ public final class ShiftEconomy extends JavaPlugin {
     }
 
     private void connectDataSources() {
+        UserRepository userRepository;
+        TransactionRepository transactionRepository;
         switch (dataSource.storageMethod()) {
             case MONGODB -> {
                 var mongoConnector = new MongoConnector(dataSource.mongodbConnectionUri(), dataSource.database());
@@ -93,6 +91,7 @@ public final class ShiftEconomy extends JavaPlugin {
             default -> throw new IllegalStateException("Not yet implemented: " + dataSource.storageMethod());
         }
 
+        TypeCache<UserData> userDataCache;
         switch (cacheSource.cachingMethod()) {
             case REDIS -> {
                 RedisClient redisClient = RedisClient.create("redis://" + cacheSource.password() + "@" + cacheSource.address() + ":" + cacheSource.port());
