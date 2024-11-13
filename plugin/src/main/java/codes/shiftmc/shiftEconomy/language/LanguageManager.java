@@ -28,7 +28,7 @@ public final class LanguageManager {
     private final Map<String, Map<String, Component>> computedMessages = new HashMap<>();
 
     private static final MiniMessage mm = MiniMessage.builder().build();
-    private static final Pattern VALID_KEY_PATTERN = Pattern.compile("^[a-zA-Z]+(\\.[a-zA-Z]+)*$");
+    private static final Pattern VALID_KEY_PATTERN = Pattern.compile("^[a-zA-Z]+([.-][a-zA-Z]+)*$");
 
     /**
      * Initializes the LanguageManager.
