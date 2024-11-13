@@ -26,6 +26,7 @@ import codes.shiftmc.shiftEconomy.configuration.DataSource;
 import codes.shiftmc.shiftEconomy.configuration.MessagingSource;
 import codes.shiftmc.shiftEconomy.language.LanguageManager;
 import codes.shiftmc.shiftEconomy.listeners.AsyncPlayerPreLoginListener;
+import codes.shiftmc.shiftEconomy.packet.PaymentPacketListener;
 import codes.shiftmc.shiftEconomy.vault.VaultEconomyHook;
 import io.lettuce.core.RedisClient;
 import io.lettuce.core.api.reactive.RedisReactiveCommands;
@@ -75,6 +76,9 @@ public final class ShiftEconomy extends JavaPlugin {
 
         // Register listeners
         Bukkit.getServer().getPluginManager().registerEvents(new AsyncPlayerPreLoginListener(userService), this);
+
+        // Register packets
+        messagingManager.addListener(new PaymentPacketListener());
     }
 
     private void connectDataSources() {
