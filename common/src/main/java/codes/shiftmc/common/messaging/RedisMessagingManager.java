@@ -4,6 +4,7 @@ import codes.shiftmc.common.adapter.ShiftPacketTypeAdapter;
 import codes.shiftmc.common.messaging.packet.ShiftPacket;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonObject;
 import io.lettuce.core.RedisClient;
 import io.lettuce.core.api.StatefulRedisConnection;
 import io.lettuce.core.pubsub.StatefulRedisPubSubConnection;
@@ -11,9 +12,6 @@ import io.lettuce.core.pubsub.api.reactive.ChannelMessage;
 import io.lettuce.core.pubsub.api.reactive.RedisPubSubReactiveCommands;
 import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Flux;
-
-import java.util.Set;
-import java.util.concurrent.CopyOnWriteArraySet;
 
 @Slf4j
 public class RedisMessagingManager extends MessagingManager {
@@ -38,7 +36,9 @@ public class RedisMessagingManager extends MessagingManager {
 
     @Override
     public void sendPacket(ShiftPacket packet) {
-        String json = gson.toJson(packet);
+        JsonObject jsonObject = gson.toJsonTree(packet).getAsJsonObject();
+        jsonObject.addProperty("packetType", packet.getClass().getSimpleName()); // Add packet type
+        String json = gson.toJson(jsonObject);
         connection.reactive().publish(CHANNEL_NAME, json).subscribe();
     }
 
@@ -53,6 +53,7 @@ public class RedisMessagingManager extends MessagingManager {
     }
 
     private void handleIncomingMessage(String message) {
+        
         try {
             ShiftPacket packet = gson.fromJson(message, ShiftPacket.class);
             if (packet != null) handleIncomingPacket(packet);
