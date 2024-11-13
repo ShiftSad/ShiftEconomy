@@ -25,7 +25,7 @@ dependencies {
     compileOnly("io.papermc.paper:paper-api:1.21.1-R0.1-SNAPSHOT")
     compileOnly("com.github.MilkBowl:VaultAPI:1.7")
 
-    implementation project(':common')
+    implementation project(":common")
     implementation("org.mongodb:mongodb-driver-reactivestreams:5.2.0")
     implementation("io.projectreactor:reactor-core:3.6.10")
     implementation("io.lettuce:lettuce-core:6.5.0.RC2")
@@ -34,7 +34,7 @@ dependencies {
     compileOnly("org.projectlombok:lombok:1.18.34")
     annotationProcessor("org.projectlombok:lombok:1.18.34")
 
-    compileOnly "dev.jorel:commandapi-bukkit-core:9.6.0"
+    compileOnly("dev.jorel:commandapi-bukkit-core:9.6.0")
 }
 
 def paperPlugins = runPaper.downloadPluginsSpec {
