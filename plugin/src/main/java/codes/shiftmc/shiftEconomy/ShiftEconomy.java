@@ -35,7 +35,11 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.ServicePriority;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.util.UUID;
+
 public final class ShiftEconomy extends JavaPlugin {
+
+    public static final UUID serverUUID = UUID.randomUUID();
 
     private DataSource dataSource;
     private CacheSource cacheSource;
@@ -65,6 +69,7 @@ public final class ShiftEconomy extends JavaPlugin {
         new MoneyCommand(
                 userService,
                 transactionService,
+                messagingManager,
                 this
         ).register();
 

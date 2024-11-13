@@ -1,5 +1,6 @@
 package codes.shiftmc.shiftEconomy.commands;
 
+import codes.shiftmc.common.messaging.MessagingManager;
 import codes.shiftmc.common.service.TransactionService;
 import codes.shiftmc.common.service.UserService;
 import codes.shiftmc.common.util.NumberFormatter;
@@ -28,6 +29,7 @@ public class MoneyCommand {
 
     private final UserService userService;
     private final TransactionService transactionService;
+    private final MessagingManager messagingManager;
     private final JavaPlugin plugin;
 
     public void register() {
@@ -40,7 +42,7 @@ public class MoneyCommand {
                         new AdminCommand(plugin).get(),
                         new TopCommand(userService).get(),
                         new TransactionsCommand(transactionService, userService).get(),
-                        new PayCommand(transactionService, userService).get()
+                        new PayCommand(transactionService, userService, messagingManager).get()
                 )
                 .withOptionalArguments(new OfflinePlayerArgument("player"))
                 .executesPlayer((player, arguments) -> {

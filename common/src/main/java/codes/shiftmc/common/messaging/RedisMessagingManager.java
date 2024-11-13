@@ -9,11 +9,13 @@ import io.lettuce.core.api.StatefulRedisConnection;
 import io.lettuce.core.pubsub.StatefulRedisPubSubConnection;
 import io.lettuce.core.pubsub.api.reactive.ChannelMessage;
 import io.lettuce.core.pubsub.api.reactive.RedisPubSubReactiveCommands;
+import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Flux;
 
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 
+@Slf4j
 public class RedisMessagingManager extends MessagingManager {
 
     private final RedisClient redisClient;
@@ -64,6 +66,7 @@ public class RedisMessagingManager extends MessagingManager {
     private void handleIncomingMessage(String message) {
         // Deserialize the JSON to ShiftPacket
         ShiftPacket packet = gson.fromJson(message, ShiftPacket.class);
+        log.info(packet.toString());
 
         // Notify all listeners
         for (PacketListener listener : listeners) {

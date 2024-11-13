@@ -1,16 +1,20 @@
 package codes.shiftmc.shiftEconomy.commands.player;
 
+import codes.shiftmc.common.messaging.MessagingManager;
+import codes.shiftmc.common.messaging.packet.PaymentPacket;
 import codes.shiftmc.common.model.Transaction;
 import codes.shiftmc.common.model.UserData;
 import codes.shiftmc.common.service.TransactionService;
 import codes.shiftmc.common.service.UserService;
 import codes.shiftmc.common.util.NumberFormatter;
+import codes.shiftmc.shiftEconomy.ShiftEconomy;
 import codes.shiftmc.shiftEconomy.language.LanguageManager;
 import dev.jorel.commandapi.CommandAPICommand;
 import dev.jorel.commandapi.arguments.DoubleArgument;
 import dev.jorel.commandapi.arguments.OfflinePlayerArgument;
 import lombok.AllArgsConstructor;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
+import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -25,6 +29,7 @@ public class PayCommand {
 
     private final TransactionService transactionService;
     private final UserService userService;
+    private final MessagingManager messagingManager;
 
     public CommandAPICommand get() {
         return new CommandAPICommand("pay")
@@ -70,6 +75,14 @@ public class PayCommand {
                     if (receiver.isOnline()) lang.sendMessage((Player) receiver, "player.pay.received",
                                                               Placeholder.unparsed("sender", receiver.getName()),
                                                               Placeholder.unparsed("amount", NumberFormatter.format(amount)));
+                    else {
+                        messagingManager.sendPacket(new PaymentPacket(
+                                UUID.fromString(senderUUID),
+                                receiver.getUniqueId(),
+                                amount,
+                                ShiftEconomy.serverUUID
+                        ));
+                    }
                 })
                 .subscribe();
     }
