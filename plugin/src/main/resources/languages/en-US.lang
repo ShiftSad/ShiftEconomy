@@ -20,9 +20,9 @@ player.top.missing=Empty
 
 player.transactions.empty=<red>No transactions found :(
 player.transactions.header=<br><green>Transactions History<br>
-player.transactions.footer=<br><green><click:run_command:'/money transactions <back_upper>..<back_lower>'><<</click> | <click:run_command:'/money top <forward_lower>..<forward_upper>'>>></click>
-player.transactions.receive=<green> + Você recebeu <amount> de <sender>
-player.transactions.send=<red> - Você pagou <amount> para <receiver>
+player.transactions.footer=<br><green><click:run_command:'/money transactions <back_upper>..<back_lower>'><<</click> | <click:run_command:'/money transactions <forward_lower>..<forward_upper>'>>></click>
+player.transactions.receive=<green> + You received <amount> from <sender>
+player.transactions.send=<red> - You paid <amount> to <receiver>
 
 player.pay.sent=<green>You sent <amount> to <receiver>
 player.pay.received=<green>You received <amount> from <sender>

@@ -14,7 +14,9 @@ import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import reactor.core.publisher.Mono;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.UUID;
 
 @Slf4j
@@ -48,35 +50,47 @@ public class TransactionsCommand {
                                 return Mono.just(transactions);
                             })
                             .doOnNext(transactions -> {
+                                List<Mono<Void>> transactionMessages = new ArrayList<>();
+
                                 for (Transaction transaction : transactions) {
                                     UUID targetUUID = transaction.receiverUUID().equals(sender.getUniqueId())
                                             ? transaction.senderUUID()
                                             : transaction.receiverUUID();
 
-                                    nameFromUUID(targetUUID, userService).subscribe(name -> {
-                                        if (transaction.receiverUUID().equals(sender.getUniqueId())) {
-                                            // Receive
-                                            lang.sendMessage(sender,  "player.transactions.receive",
-                                                    Placeholder.unparsed("amount", NumberFormatter.format(transaction.amount())),
-                                                    Placeholder.unparsed("sender", name)
-                                            );
-                                        } else {
-                                            // Sent
-                                            lang.sendMessage(sender, "player.transactions.send",
-                                                    Placeholder.unparsed("amount", NumberFormatter.format(transaction.amount())),
-                                                    Placeholder.unparsed("receiver", name)
-                                            );
-                                        }
-                                    });
+                                    // Collect each transaction message operation into a Mono<Void> list
+                                    Mono<Void> transactionMessage = nameFromUUID(targetUUID, userService)
+                                        .flatMap(name -> {
+                                            if (transaction.receiverUUID().equals(sender.getUniqueId())) {
+                                                // Receive
+                                                lang.sendMessage(sender, "player.transactions.receive",
+                                                        Placeholder.unparsed("amount", NumberFormatter.format(transaction.amount())),
+                                                        Placeholder.unparsed("sender", name)
+                                                );
+                                            } else {
+                                                // Sent
+                                                lang.sendMessage(sender, "player.transactions.send",
+                                                        Placeholder.unparsed("amount", NumberFormatter.format(transaction.amount())),
+                                                        Placeholder.unparsed("receiver", name)
+                                                );
+                                            }
+                                            return Mono.empty();
+                                        });
+
+                                    transactionMessages.add(transactionMessage);
                                 }
 
-                                var footer = lang.getRawMessage(sender, "player.transactions.footer")
-                                            .replace("<back_lower>", Math.max(range.getUpperBound() - 10, 10) + "")
-                                            .replace("<back_upper>", Math.max(range.getLowerBound() - 10, 0) + "")
-                                            .replace("<forward_lower>", range.getLowerBound() + 10 + "")
-                                            .replace("<forward_upper>", range.getUpperBound() + 10 + "");
+                                // After all transaction messages are processed, send the footer
+                                Mono.when(transactionMessages)
+                                    .doOnTerminate(() -> {
+                                        var footer = lang.getRawMessage(sender, "player.transactions.footer")
+                                                .replace("<back_lower>", Math.max(range.getUpperBound() - 10, 10) + "")
+                                                .replace("<back_upper>", Math.max(range.getLowerBound() - 10, 0) + "")
+                                                .replace("<forward_lower>", range.getLowerBound() + 10 + "")
+                                                .replace("<forward_upper>", range.getUpperBound() + 10 + "");
 
-                                sender.sendMessage(mm.deserialize(footer));
+                                        sender.sendMessage(mm.deserialize(footer));
+                                    })
+                                    .subscribe();
                             })
                             .subscribe();
                 });

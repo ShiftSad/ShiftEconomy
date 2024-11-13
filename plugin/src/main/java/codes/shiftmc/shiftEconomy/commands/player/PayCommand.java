@@ -4,16 +4,20 @@ import codes.shiftmc.common.model.Transaction;
 import codes.shiftmc.common.model.UserData;
 import codes.shiftmc.common.service.TransactionService;
 import codes.shiftmc.common.service.UserService;
+import codes.shiftmc.common.util.NumberFormatter;
 import codes.shiftmc.shiftEconomy.language.LanguageManager;
 import dev.jorel.commandapi.CommandAPICommand;
 import dev.jorel.commandapi.arguments.DoubleArgument;
 import dev.jorel.commandapi.arguments.OfflinePlayerArgument;
 import lombok.AllArgsConstructor;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import reactor.core.publisher.Mono;
 
+import java.nio.charset.StandardCharsets;
+import java.util.Objects;
 import java.util.UUID;
 
 @AllArgsConstructor
@@ -54,10 +58,18 @@ public class PayCommand {
             return;
         }
 
-        pay(UUID.fromString(senderUUID), receiver.getUniqueId(), amount)
-                .doOnNext((a) -> {
-                    lang.sendMessage(sender, "player.pay.sent");
-                    if (receiver.isOnline()) lang.sendMessage((Player) receiver, "player.pay.received");
+        UUID a;
+        if (Objects.equals(senderUUID, "server")) a = UUID.nameUUIDFromBytes(senderUUID.getBytes(StandardCharsets.UTF_8));
+        else a = UUID.fromString(senderUUID);
+
+        pay(a, receiver.getUniqueId(), amount)
+                .doOnSuccess((unused) -> {
+                    lang.sendMessage(sender, "player.pay.sent",
+                                     Placeholder.unparsed("receiver", sender.getName()),
+                                     Placeholder.unparsed("amount", NumberFormatter.format(amount)));
+                    if (receiver.isOnline()) lang.sendMessage((Player) receiver, "player.pay.received",
+                                                              Placeholder.unparsed("sender", receiver.getName()),
+                                                              Placeholder.unparsed("amount", NumberFormatter.format(amount)));
                 })
                 .subscribe();
     }
@@ -71,11 +83,13 @@ public class PayCommand {
      * This method assumes you already checked the balance
      */
     private Mono<Void> pay(UUID senderUUID, UUID receiverUUID, double amount) {
-        Mono<UserData> debitOperation = senderUUID != null
-            ? userService.updateBalance(senderUUID, -amount)
+        Mono<Void> debitOperation = senderUUID != null
+            ? userService.getBalance(senderUUID)
+                .flatMap(balance -> userService.updateBalance(senderUUID, balance - amount)).then()
             : Mono.empty();
 
-        var creditOperation = userService.updateBalance(receiverUUID, +amount);
+        Mono<Void> creditOperation = userService.getBalance(receiverUUID)
+            .flatMap(balance -> userService.updateBalance(receiverUUID, balance + amount)).then();
 
         var transaction = new Transaction(
                 UUID.randomUUID(), senderUUID, receiverUUID, amount, System.currentTimeMillis()
