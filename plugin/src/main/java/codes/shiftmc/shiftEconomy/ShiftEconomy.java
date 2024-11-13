@@ -78,7 +78,7 @@ public final class ShiftEconomy extends JavaPlugin {
         Bukkit.getServer().getPluginManager().registerEvents(new AsyncPlayerPreLoginListener(userService), this);
 
         // Register packets
-        messagingManager.addListener(new PaymentPacketListener());
+        messagingManager.addListener(new PaymentPacketListener(userService));
     }
 
     private void connectDataSources() {

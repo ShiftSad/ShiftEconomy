@@ -96,7 +96,7 @@ public class TransactionsCommand {
                 });
     }
 
-    private static Mono<String> nameFromUUID(UUID uuid, UserService userService) {
+    public static Mono<String> nameFromUUID(UUID uuid, UserService userService) {
         if (uuid == null) return Mono.just("server");
         return userService.findByUuid(uuid)
                 .flatMap(userData -> Mono.justOrEmpty(userData.getUsername()));
