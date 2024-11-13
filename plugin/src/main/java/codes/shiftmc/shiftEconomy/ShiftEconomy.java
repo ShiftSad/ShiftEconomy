@@ -5,8 +5,12 @@ import codes.shiftmc.common.cache.RedisTypeCache;
 import codes.shiftmc.common.cache.TypeCache;
 import codes.shiftmc.common.connectors.MongoConnector;
 import codes.shiftmc.common.connectors.MySQLConnector;
+import codes.shiftmc.common.messaging.EmptyMessagingManager;
+import codes.shiftmc.common.messaging.MessagingManager;
+import codes.shiftmc.common.messaging.RedisMessagingManager;
 import codes.shiftmc.common.model.UserData;
 import codes.shiftmc.common.model.enums.CachingMethod;
+import codes.shiftmc.common.model.enums.MessagingMethod;
 import codes.shiftmc.common.model.enums.StorageMethod;
 import codes.shiftmc.common.repository.TransactionRepository;
 import codes.shiftmc.common.repository.UserRepository;
@@ -19,6 +23,7 @@ import codes.shiftmc.common.service.UserService;
 import codes.shiftmc.shiftEconomy.commands.MoneyCommand;
 import codes.shiftmc.shiftEconomy.configuration.CacheSource;
 import codes.shiftmc.shiftEconomy.configuration.DataSource;
+import codes.shiftmc.shiftEconomy.configuration.MessagingSource;
 import codes.shiftmc.shiftEconomy.language.LanguageManager;
 import codes.shiftmc.shiftEconomy.listeners.AsyncPlayerPreLoginListener;
 import codes.shiftmc.shiftEconomy.vault.VaultEconomyHook;
@@ -34,7 +39,9 @@ public final class ShiftEconomy extends JavaPlugin {
 
     private DataSource dataSource;
     private CacheSource cacheSource;
+    private MessagingSource messagingSource;
 
+    private MessagingManager messagingManager;
     private TypeCache<UserData> userDataCache;
     private UserRepository userRepository;
     private TransactionRepository transactionRepository;
@@ -97,6 +104,11 @@ public final class ShiftEconomy extends JavaPlugin {
             default -> throw new IllegalStateException("Not yet implemented: " + cacheSource.cachingMethod());
         }
 
+        switch (messagingSource.messagingMethod()) {
+            case REDIS -> messagingManager = new RedisMessagingManager("redis://" + cacheSource.password() + "@" + cacheSource.address() + ":" + cacheSource.port());
+            case NONE -> messagingManager = new EmptyMessagingManager();
+        }
+
         // Initialize UserService with the repositories and cache
         userService = new UserService(userRepository, userDataCache);
         transactionService = new TransactionService(transactionRepository);
@@ -118,5 +130,12 @@ public final class ShiftEconomy extends JavaPlugin {
             config.createSection("cacheSource", cacheSource.serialize());
             saveConfig();
         } else cacheSource = CacheSource.deserialize(config.getConfigurationSection("cacheSource").getValues(false));
+
+        // Load of save default MessagingSource
+        if (!config.contains("messagingSource")) {
+            messagingSource = new MessagingSource(MessagingMethod.NONE);
+            config.createSection("messagingSource", messagingSource.serialize());
+            saveConfig();
+        } else messagingSource = MessagingSource.deserialize(config.getConfigurationSection("messagingSource").getValues(false));
     }
 }
