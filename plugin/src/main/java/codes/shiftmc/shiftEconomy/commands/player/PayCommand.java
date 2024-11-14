@@ -75,10 +75,10 @@ public class PayCommand {
         pay(a, receiver.getUniqueId(), amount)
                 .doOnSuccess((unused) -> {
                     lang.sendMessage(sender, "player.pay.sent",
-                                     Placeholder.unparsed("receiver", sender.getName()),
+                                     Placeholder.unparsed("receiver", Objects.requireNonNull(receiver.getName())),
                                      Placeholder.unparsed("amount", NumberFormatter.format(amount)));
                     if (receiver.isOnline()) lang.sendMessage((Player) receiver, "player.pay.received",
-                                                              Placeholder.unparsed("sender", receiver.getName()),
+                                                              Placeholder.unparsed("sender", sender.getName()),
                                                               Placeholder.unparsed("amount", NumberFormatter.format(amount)));
                     else {
                         messagingManager.sendPacket(new PaymentPacket(

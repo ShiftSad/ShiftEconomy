@@ -31,6 +31,7 @@ public class PaymentPacketListener implements PacketListener<PaymentPacket> {
         nameFromUUID(packet.senderUUID(), userService)
                 .doOnNext(name -> lang.sendMessage(receiver, "player.pay.received",
                         Placeholder.unparsed("sender", name),
-                        Placeholder.unparsed("amount", NumberFormatter.format(packet.amount()))));
+                        Placeholder.unparsed("amount", NumberFormatter.format(packet.amount()))))
+                .subscribe();
     }
 }
