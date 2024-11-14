@@ -336,7 +336,7 @@ public final class LanguageManager {
     @NotNull
     public String getRawMessage(@NotNull String language, @NotNull String message) {
         language = messages.containsKey(language) ? language : DEFAULT_LANGUAGE;
-        return messages.getOrDefault(language, new HashMap<>()).getOrDefault(message, "Message not found");
+        return messages.getOrDefault(language, new HashMap<>()).getOrDefault(message, "Message " + message + " not found");
     }
 
     /**
