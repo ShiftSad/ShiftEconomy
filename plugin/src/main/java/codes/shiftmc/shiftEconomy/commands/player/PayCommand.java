@@ -3,7 +3,6 @@ package codes.shiftmc.shiftEconomy.commands.player;
 import codes.shiftmc.common.messaging.MessagingManager;
 import codes.shiftmc.common.messaging.packet.PaymentPacket;
 import codes.shiftmc.common.model.Transaction;
-import codes.shiftmc.common.model.UserData;
 import codes.shiftmc.common.service.TransactionService;
 import codes.shiftmc.common.service.UserService;
 import codes.shiftmc.common.util.NumberFormatter;
@@ -14,7 +13,6 @@ import dev.jorel.commandapi.arguments.DoubleArgument;
 import dev.jorel.commandapi.arguments.OfflinePlayerArgument;
 import lombok.AllArgsConstructor;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
-import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -23,6 +21,7 @@ import reactor.core.publisher.Mono;
 import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 @AllArgsConstructor
 public class PayCommand {
@@ -68,6 +67,11 @@ public class PayCommand {
             return;
         }
 
+        if (amount < 0) {
+            lang.sendMessage(sender, "player.pay.error.negative");
+            return;
+        }
+
         UUID a;
         if (Objects.equals(senderUUID, "server")) a = UUID.nameUUIDFromBytes(senderUUID.getBytes(StandardCharsets.UTF_8));
         else a = UUID.fromString(senderUUID);
@@ -89,6 +93,10 @@ public class PayCommand {
                         ));
                     }
                 })
+                .onErrorResume((error) -> {
+                    lang.sendMessage(sender,  "player.pay.error.not-found");
+                    return Mono.empty();
+                })
                 .subscribe();
     }
 
@@ -101,13 +109,15 @@ public class PayCommand {
      * This method assumes you already checked the balance
      */
     private Mono<Void> pay(UUID senderUUID, UUID receiverUUID, double amount) {
+        Mono<Void> creditOperation = userService.getBalance(receiverUUID)
+            .switchIfEmpty(Mono.error(new IllegalStateException("Receiver balance is null")))
+            .flatMap(balance -> userService.updateBalance(receiverUUID, balance + amount)).then();
+
         Mono<Void> debitOperation = senderUUID != null
             ? userService.getBalance(senderUUID)
+                .switchIfEmpty(Mono.error(new IllegalStateException("Sender balance is null")))
                 .flatMap(balance -> userService.updateBalance(senderUUID, balance - amount)).then()
             : Mono.empty();
-
-        Mono<Void> creditOperation = userService.getBalance(receiverUUID)
-            .flatMap(balance -> userService.updateBalance(receiverUUID, balance + amount)).then();
 
         var transaction = new Transaction(
                 UUID.randomUUID(), senderUUID, receiverUUID, amount, System.currentTimeMillis()

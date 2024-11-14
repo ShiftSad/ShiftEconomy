@@ -27,6 +27,8 @@ player.transactions.send=<red> - You paid <amount> to <receiver>
 player.pay.sent=<green>You sent <amount> to <receiver>
 player.pay.received=<green>You received <amount> from <sender>
 player.pay.error.cant-send-to-self=<red>ERROR: You can't send money to yourself
+player.pay.error.not-found=<red>ERROR: Target not found
+player.pay.error.negative=<red>ERROR: Can't send negative funds
 
 # Errors related to integer range arguments
 player.range.error.big=<red>ERROR: You cannot view more than 15 players at once.
