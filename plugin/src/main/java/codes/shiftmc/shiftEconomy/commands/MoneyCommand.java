@@ -39,7 +39,7 @@ public class MoneyCommand {
 
         new CommandAPICommand("money")
                 .withSubcommands(
-                        new AdminCommand(plugin).get(),
+                        new AdminCommand(userService, messagingManager, plugin).get(),
                         new TopCommand(userService).get(),
                         new TransactionsCommand(transactionService, userService).get(),
                         new PayCommand(transactionService, userService, messagingManager).get()

@@ -14,6 +14,7 @@ import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import reactor.core.publisher.Mono;
 
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -98,6 +99,7 @@ public class TransactionsCommand {
 
     public static Mono<String> nameFromUUID(UUID uuid, UserService userService) {
         if (uuid == null) return Mono.just("server");
+        if (uuid.equals(UUID.nameUUIDFromBytes("server".getBytes(StandardCharsets.UTF_8)))) return Mono.just("server");
         return userService.findByUuid(uuid)
                 .flatMap(userData -> Mono.justOrEmpty(userData.getUsername()));
     }
