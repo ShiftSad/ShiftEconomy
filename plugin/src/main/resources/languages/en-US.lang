@@ -30,7 +30,7 @@ player.pay.error.cant-send-to-self=<red>ERROR: You can't send money to yourself
 player.pay.error.not-found=<red>ERROR: Target not found
 player.pay.error.negative=<red>ERROR: Can't send negative funds
 
-player.set.balance.set=<green>You set <target>'s balance to <amount>
+player.set.balance.set=<green>You set <receiver>'s balance to <amount>
 player.set.balance.receive=<green>Your balance is now <amount>, set by an admin
 
 # Errors related to integer range arguments
