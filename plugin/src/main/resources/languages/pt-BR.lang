@@ -30,6 +30,9 @@ player.pay.error.cant-send-to-self=<red>ERRO: Você não pode se mandar dinheiro
 player.pay.error.not-found=<red>ERRO: Player não encontrado
 player.pay.error.negative=<red>ERRO: Voce não pode mandar fundos negativos
 
+player.set.balance.set=<green>Você definiu o saldo de <target> para <amount>
+player.set.balance.receive=<green>Seu saldo agora é <amount>, definido por um administrador
+
 # Erros relacionados a argumentos de intervalo de inteiros
 player.range.error.big=<red>ERRO: Você não pode ver mais de 15 jogadores de uma vez.
 player.range.error.negative=<red>ERRO: Você não pode ver uma posição negativa.

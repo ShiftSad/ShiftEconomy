@@ -32,7 +32,6 @@ public class SetCommand {
                         new OfflinePlayerArgument("target"),
                         new DoubleArgument("amount")
                 )
-                .withPermission("shifteconomy.admin.set")
                 .executes((sender, args) -> {
                     var target = (OfflinePlayer) args.get("target");
                     var amount = (Double) args.get("amount");
@@ -44,34 +43,35 @@ public class SetCommand {
         var lang = LanguageManager.instance();
 
         if (target == null || amount == null) {
-            lang.sendMessage(sender, "admin.command.error.invalid-arguments");
+            lang.sendMessage(sender, "player.command.error.invalid-arguments");
             return;
         }
 
         if (amount < 0) {
-            lang.sendMessage(sender, "admin.set.error.negative");
+            lang.sendMessage(sender, "player.pay.error.negative");
             return;
         }
 
         userService.updateBalance(target.getUniqueId(), amount)
                 .doOnSuccess(unused -> {
-                    lang.sendMessage(sender, "admin.set.success",
-                            Placeholder.unparsed("target", Objects.requireNonNull(target.getName())),
+                    lang.sendMessage(sender, "player.set.balance.set",
+                            Placeholder.unparsed("receiver", Objects.requireNonNull(target.getName())),
                             Placeholder.unparsed("amount", NumberFormatter.format(amount)));
                     if (target.isOnline()) {
-                        lang.sendMessage((Player) target, "player.balance.set",
+                        lang.sendMessage((Player) target, "player.set.balance.receive",
                                 Placeholder.unparsed("amount", NumberFormatter.format(amount)));
                     } else {
                         messagingManager.sendPacket(new PaymentPacket(
                                 UUID.nameUUIDFromBytes("server".getBytes(StandardCharsets.UTF_8)),
                                 target.getUniqueId(),
                                 amount,
-                                ShiftEconomy.serverUUID
+                                ShiftEconomy.serverUUID,
+                                PaymentPacket.PaymentType.SET
                         ));
                     }
                 })
                 .onErrorResume(error -> {
-                    lang.sendMessage(sender, "admin.set.error.failed");
+                    lang.sendMessage(sender, "generic.error");
                     return Mono.empty();
                 })
                 .subscribe();

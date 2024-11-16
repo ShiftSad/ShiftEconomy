@@ -89,7 +89,8 @@ public class PayCommand {
                                 UUID.fromString(senderUUID),
                                 receiver.getUniqueId(),
                                 amount,
-                                ShiftEconomy.serverUUID
+                                ShiftEconomy.serverUUID,
+                                PaymentPacket.PaymentType.PAY
                         ));
                     }
                 })

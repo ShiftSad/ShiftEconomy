@@ -6,5 +6,10 @@ public record PaymentPacket(
     UUID senderUUID,
     UUID receiverUUID,
     Double amount,
-    UUID serverUUID
-) implements ShiftPacket { }
+    UUID serverUUID,
+    PaymentType type
+) implements ShiftPacket {
+    public enum PaymentType {
+        PAY, SET
+    }
+}
