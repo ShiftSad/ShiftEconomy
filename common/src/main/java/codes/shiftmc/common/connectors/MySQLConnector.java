@@ -72,7 +72,7 @@ public class MySQLConnector {
                                         .doFinally(signal -> connection.close()))
                                 .subscribe(
                                         result -> log.debug("Database ping successful"),
-                                        error -> log.debug("Database ping failed: " + error.getMessage())
+                                        error -> log.debug("Database ping failed: {}", error.getMessage())
                                 ),
                 0, 1, TimeUnit.MINUTES
         );

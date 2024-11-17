@@ -1,10 +1,8 @@
 package codes.shiftmc.common.repository.impl;
 
 import codes.shiftmc.common.model.Transaction;
-import codes.shiftmc.common.model.UserData;
 import codes.shiftmc.common.repository.TransactionRepository;
-import io.r2dbc.spi.ConnectionFactory;
-import io.r2dbc.spi.Result;
+import io.r2dbc.spi.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -18,77 +16,82 @@ public class MySQLTransactionRepository implements TransactionRepository {
         this.connectionFactory = connectionFactory;
     }
 
+    @Override
     public Mono<Transaction> save(Transaction transaction) {
+        String query = "INSERT INTO transactions (id, senderUUID, receiverUUID, amount, timestamp) " +
+                "VALUES (?, ?, ?, ?, ?)";
         return Mono.from(connectionFactory.create())
-                .flatMap(connection ->
-                        Mono.from(connection.createStatement("INSERT INTO transactions (id, senderUUID, receiverUUID, amount, timestamp) VALUES (?, ?, ?, ?, ?)")
-                                        .bind(0, transaction.transactionID().toString())
-                                        .bind(1, transaction.senderUUID().toString())
-                                        .bind(2, transaction.receiverUUID().toString())
-                                        .bind(3, transaction.amount())
-                                        .bind(4, transaction.timestamp())
-                                        .execute())
-                                .doFinally(signal -> connection.close())
-                ).thenReturn(transaction);
+                .flatMap(connection -> Mono.from(connection.createStatement(query)
+                                .bind(0, transaction.transactionID().toString())
+                                .bind(1, transaction.senderUUID().toString())
+                                .bind(2, transaction.receiverUUID().toString())
+                                .bind(3, transaction.amount())
+                                .bind(4, transaction.timestamp())
+                                .execute())
+                        .doFinally(signal -> connection.close()))
+                .thenReturn(transaction);
     }
 
+    @Override
     public Flux<Transaction> findByUser(UUID uuid) {
-        return Mono.from(connectionFactory.create())
-                .flatMapMany(connection ->
-                        Flux.from(connection.createStatement("SELECT * FROM transactions WHERE senderUUID = ? OR receiverUUID = ?")
-                                        .bind(0, uuid.toString())
-                                        .bind(1, uuid.toString())
-                                        .execute())
-                                .flatMap(this::mapRowToTransaction)
-                                .doFinally(signal -> connection.close())
-                );
+        String query = "SELECT * FROM transactions WHERE senderUUID = ? OR receiverUUID = ?";
+        return Flux.usingWhen(
+                connectionFactory.create(),
+                connection -> Flux.from(connection.createStatement(query)
+                                .bind(0, uuid.toString())
+                                .bind(1, uuid.toString())
+                                .execute())
+                        .flatMap(result -> result.map((row, rowMetadata) -> mapRowToTransaction(row))),
+                Connection::close);
     }
 
     @Override
     public Flux<Transaction> findByUserWithAmountBounds(UUID uuid, int lowerBound, int upperBound) {
-        return Mono.from(connectionFactory.create())
-                .flatMapMany(connection ->
-                        Flux.from(connection.createStatement("SELECT * FROM transactions WHERE (senderUUID = ? OR receiverUUID = ?) AND amount >= ? AND amount <= ?")
-                                        .bind(0, uuid.toString())
-                                        .bind(1, uuid.toString())
-                                        .bind(2, lowerBound)
-                                        .bind(3, upperBound)
-                                        .execute())
-                                .flatMap(this::mapRowToTransaction)
-                                .doFinally(signal -> connection.close())
-                );
+        String query = "SELECT * FROM transactions WHERE (senderUUID = ? OR receiverUUID = ?) " +
+                "ORDER BY timestamp DESC LIMIT ? OFFSET ?";
+        int limit = upperBound - lowerBound;
+        return Flux.usingWhen(
+                connectionFactory.create(),
+                connection -> Flux.from(connection.createStatement(query)
+                                .bind(0, uuid.toString())
+                                .bind(1, uuid.toString())
+                                .bind(2, limit)
+                                .bind(3, lowerBound)
+                                .execute())
+                        .flatMap(result -> result.map((row, rowMetadata) -> mapRowToTransaction(row))),
+                Connection::close);
     }
-    
+
+    @Override
     public Flux<Transaction> findByReceiverUuid(UUID receiverUuid) {
-        return Mono.from(connectionFactory.create())
-                .flatMapMany(connection ->
-                        Flux.from(connection.createStatement("SELECT * FROM transactions WHERE receiverUUID = ?")
-                                        .bind(0, receiverUuid.toString())
-                                        .execute())
-                                .flatMap(this::mapRowToTransaction)
-                                .doFinally(signal -> connection.close())
-                );
+        String query = "SELECT * FROM transactions WHERE receiverUUID = ?";
+        return Flux.usingWhen(
+                connectionFactory.create(),
+                connection -> Flux.from(connection.createStatement(query)
+                                .bind(0, receiverUuid.toString())
+                                .execute())
+                        .flatMap(result -> result.map((row, rowMetadata) -> mapRowToTransaction(row))),
+                Connection::close);
     }
 
+    @Override
     public Flux<Transaction> findBySenderUuid(UUID senderUuid) {
-        return Mono.from(connectionFactory.create())
-                .flatMapMany(connection ->
-                        Flux.from(connection.createStatement("SELECT * FROM transactions WHERE senderUUID = ?")
-                                        .bind(0, senderUuid.toString())
-                                        .execute())
-                                .flatMap(this::mapRowToTransaction)
-                                .doFinally(signal -> connection.close())
-                );
+        String query = "SELECT * FROM transactions WHERE senderUUID = ?";
+        return Flux.usingWhen(
+                connectionFactory.create(),
+                connection -> Flux.from(connection.createStatement(query)
+                                .bind(0, senderUuid.toString())
+                                .execute())
+                        .flatMap(result -> result.map((row, rowMetadata) -> mapRowToTransaction(row))),
+                Connection::close);
     }
 
-    private Mono<Transaction> mapRowToTransaction(Result result) {
-        return Mono.from(result.map((row, metadata) ->
-                new Transaction(
-                        UUID.fromString(row.get("id", String.class)), UUID.fromString(row.get("senderUUID", String.class)),
-                        UUID.fromString(row.get("receiverUUID", String.class)), row.get("amount", Double.class),
-                        row.get("timestamp", Long.class))
-                )
-        );
+    private Transaction mapRowToTransaction(Row row) {
+        UUID transactionID = UUID.fromString(row.get("id", String.class));
+        UUID senderUUID = UUID.fromString(row.get("senderUUID", String.class));
+        UUID receiverUUID = UUID.fromString(row.get("receiverUUID", String.class));
+        double amount = row.get("amount", Double.class);
+        long timestamp = row.get("timestamp", Long.class);
+        return new Transaction(transactionID, senderUUID, receiverUUID, amount, timestamp);
     }
-
 }
