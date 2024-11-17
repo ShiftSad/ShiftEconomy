@@ -1,7 +1,7 @@
 plugins {
     id 'java'
     id 'xyz.jpenilla.run-paper' version '2.3.1'
-    id("io.github.goooler.shadow") version "8.1.7"
+    id 'com.gradleup.shadow' version '8.3.3'
 }
 
 group = 'codes.shiftmc'
@@ -34,12 +34,11 @@ dependencies {
     compileOnly("org.projectlombok:lombok:1.18.34")
     annotationProcessor("org.projectlombok:lombok:1.18.34")
 
-    compileOnly("dev.jorel:commandapi-bukkit-core:9.6.0")
+    implementation("dev.jorel:commandapi-bukkit-shade-mojang-mapped:9.6.0")
 }
 
 def paperPlugins = runPaper.downloadPluginsSpec {
     url("https://github.com/MilkBowl/Vault/releases/download/1.7.3/Vault.jar")
-    url("https://github.com/JorelAli/CommandAPI/releases/download/9.6.1/CommandAPI-9.6.1.jar")
 }
 
 tasks {
@@ -51,6 +50,7 @@ tasks {
     shadowJar {
         minimize()
         archiveClassifier.set("") // Remove all from name
+        relocate("dev.jorel.commandapi", "codes.shiftmc.commandapi")
     }
 }
 

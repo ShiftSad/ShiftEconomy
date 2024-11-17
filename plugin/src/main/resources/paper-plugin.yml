@@ -9,7 +9,3 @@ dependencies:
       load: BEFORE
       required: true
       join-classpath: true
-    CommandAPI:
-      load: BEFORE
-      required: true
-      join-classpath: true

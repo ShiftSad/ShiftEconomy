@@ -31,6 +31,8 @@ import codes.shiftmc.shiftEconomy.listeners.AsyncPlayerPreLoginListener;
 import codes.shiftmc.shiftEconomy.packet.PaymentPacketListener;
 import codes.shiftmc.shiftEconomy.packet.SendOnlinePacketListener;
 import codes.shiftmc.shiftEconomy.vault.VaultEconomyHook;
+import dev.jorel.commandapi.CommandAPI;
+import dev.jorel.commandapi.CommandAPIBukkitConfig;
 import io.lettuce.core.RedisClient;
 import io.lettuce.core.api.reactive.RedisReactiveCommands;
 import lombok.extern.slf4j.Slf4j;
@@ -38,6 +40,7 @@ import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
 import org.bukkit.plugin.ServicePriority;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -59,6 +62,9 @@ public final class ShiftEconomy extends JavaPlugin {
 
     @Override
     public void onEnable() {
+        // Shading CommandAPI
+        CommandAPI.onEnable();
+
         LanguageManager.instance(this);
 
         saveDefaultConfig();
@@ -93,6 +99,14 @@ public final class ShiftEconomy extends JavaPlugin {
         // Register packets
         messagingManager.addListener(new SendOnlinePacketListener());
         messagingManager.addListener(new PaymentPacketListener(userService));
+    }
+
+    @EventHandler
+    public void onLoad() {
+        CommandAPI.onLoad(new CommandAPIBukkitConfig(this)
+                .shouldHookPaperReload(true)
+                .usePluginNamespace()
+        );
     }
 
     private void connectDataSources() {
