@@ -47,6 +47,11 @@ tasks {
         minecraftVersion("1.21.1")
         downloadPlugins.from(paperPlugins)
     }
+
+    shadowJar {
+        minimize()
+        archiveClassifier.set("") // Remove all from name
+    }
 }
 
 def targetJavaVersion = 21
