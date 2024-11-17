@@ -1,6 +1,7 @@
 package codes.shiftmc.common.adapter;
 
 import codes.shiftmc.common.messaging.packet.PaymentPacket;
+import codes.shiftmc.common.messaging.packet.SendOnlinePacket;
 import codes.shiftmc.common.messaging.packet.ShiftPacket;
 import com.google.gson.*;
 
@@ -14,7 +15,7 @@ public class ShiftPacketTypeAdapter implements JsonSerializer<ShiftPacket>, Json
 
     static {
         PACKET_TYPES.put("PaymentPacket", PaymentPacket.class);
-        // Register other packet types here
+        PACKET_TYPES.put("SendOnlinePacket", SendOnlinePacket.class);
     }
 
     @Override
