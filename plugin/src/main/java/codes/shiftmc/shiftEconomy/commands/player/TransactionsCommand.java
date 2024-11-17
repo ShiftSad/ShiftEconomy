@@ -31,6 +31,7 @@ public class TransactionsCommand {
 
     public CommandAPICommand get() {
         return new CommandAPICommand("transactions")
+                .withPermission("shifteconomy.money.player.transactions")
                 .withOptionalArguments(new IntegerRangeArgument("range"))
                 .executesPlayer((sender, args) -> {
                     var lang = LanguageManager.instance();

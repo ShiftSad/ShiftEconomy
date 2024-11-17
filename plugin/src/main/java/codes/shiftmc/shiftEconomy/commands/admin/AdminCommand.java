@@ -15,6 +15,7 @@ public class AdminCommand {
 
     public CommandAPICommand get() {
         return new CommandAPICommand( "admin")
+                .withPermission("shifteconomy.money.admin")
                 .withSubcommands(
                         new ReloadCommand(plugin).get(),
                         new SetCommand(userService, messagingManager).get()

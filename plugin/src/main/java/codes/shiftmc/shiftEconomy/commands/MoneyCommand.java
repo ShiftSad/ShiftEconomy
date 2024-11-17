@@ -41,6 +41,7 @@ public class MoneyCommand {
         ));
 
         new CommandAPICommand("money")
+                .withPermission("shifteconomy.money.player")
                 .withSubcommands(
                         new AdminCommand(userService, messagingManager, plugin).get(),
                         new TopCommand(userService).get(),

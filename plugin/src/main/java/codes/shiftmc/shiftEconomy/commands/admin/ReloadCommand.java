@@ -13,6 +13,7 @@ public class ReloadCommand {
 
     public CommandAPICommand get() {
         return new CommandAPICommand("reload")
+                .withPermission("shifteconomy.money.admin.reload")
                 .withSubcommand(language())
                 .executes((sender, args) -> {
                     reloadLanguage(sender);

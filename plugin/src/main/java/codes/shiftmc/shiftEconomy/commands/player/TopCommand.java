@@ -22,6 +22,7 @@ public class TopCommand {
 
     public CommandAPICommand get() {
         return new CommandAPICommand( "top")
+                .withPermission("shifteconomy.money.player.top")
                 .withOptionalArguments(new IntegerRangeArgument("range"))
                 .executes((sender, args) -> {
                     var lang = LanguageManager.instance();

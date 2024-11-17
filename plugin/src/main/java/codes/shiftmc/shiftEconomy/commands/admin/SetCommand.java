@@ -30,6 +30,7 @@ public class SetCommand {
 
     public CommandAPICommand get() {
         return new CommandAPICommand("set")
+                .withPermission("shifteconomy.money.admin.set")
                 .withArguments(
                         new OfflinePlayerArgument("target")
                                 .replaceSuggestions(ArgumentSuggestions.strings(info ->

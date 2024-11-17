@@ -34,6 +34,7 @@ public class PayCommand {
 
     public CommandAPICommand get() {
         return new CommandAPICommand("pay")
+                .withPermission("shifteconomy.money.player.pay")
                 .withArguments(
                         new OfflinePlayerArgument("target")
                                 .replaceSuggestions(ArgumentSuggestions.strings(info ->
