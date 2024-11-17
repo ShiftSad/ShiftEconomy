@@ -29,9 +29,11 @@ import codes.shiftmc.shiftEconomy.configuration.MessagingSource;
 import codes.shiftmc.shiftEconomy.language.LanguageManager;
 import codes.shiftmc.shiftEconomy.listeners.AsyncPlayerPreLoginListener;
 import codes.shiftmc.shiftEconomy.packet.PaymentPacketListener;
+import codes.shiftmc.shiftEconomy.packet.SendOnlinePacketListener;
 import codes.shiftmc.shiftEconomy.vault.VaultEconomyHook;
 import io.lettuce.core.RedisClient;
 import io.lettuce.core.api.reactive.RedisReactiveCommands;
+import lombok.extern.slf4j.Slf4j;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -42,6 +44,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.util.Collection;
 import java.util.UUID;
 
+@Slf4j
 public final class ShiftEconomy extends JavaPlugin {
 
     public static final UUID serverUUID = UUID.randomUUID();
@@ -83,10 +86,12 @@ public final class ShiftEconomy extends JavaPlugin {
 
         // Broadcast online players every minute
         Bukkit.getScheduler().runTaskTimerAsynchronously(this, () -> {
-            messagingManager.sendPacket(new SendOnlinePacket(serverUUID.toString(), getSimplePlayers()));
-        }, 1, 20 * 60);
+            var packet = new SendOnlinePacket(serverUUID.toString(), getSimplePlayers());
+            messagingManager.sendPacket(packet);
+        }, 1, 20);
 
         // Register packets
+        messagingManager.addListener(new SendOnlinePacketListener());
         messagingManager.addListener(new PaymentPacketListener(userService));
     }
 

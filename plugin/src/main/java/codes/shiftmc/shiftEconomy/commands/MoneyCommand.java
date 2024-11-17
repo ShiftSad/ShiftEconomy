@@ -9,7 +9,9 @@ import codes.shiftmc.shiftEconomy.commands.player.PayCommand;
 import codes.shiftmc.shiftEconomy.commands.player.TopCommand;
 import codes.shiftmc.shiftEconomy.commands.player.TransactionsCommand;
 import codes.shiftmc.shiftEconomy.language.LanguageManager;
+import codes.shiftmc.shiftEconomy.packet.SendOnlinePacketListener;
 import dev.jorel.commandapi.CommandAPICommand;
+import dev.jorel.commandapi.arguments.ArgumentSuggestions;
 import dev.jorel.commandapi.arguments.OfflinePlayerArgument;
 import dev.jorel.commandapi.arguments.SafeSuggestions;
 import lombok.AllArgsConstructor;
@@ -33,9 +35,10 @@ public class MoneyCommand {
     private final JavaPlugin plugin;
 
     public void register() {
-        var playerArg = new OfflinePlayerArgument("player").replaceSafeSuggestions(
-                SafeSuggestions.suggest(info -> Bukkit.getOnlinePlayers().toArray(new Player[0]))
-        );
+        var playerArg = new OfflinePlayerArgument("target")
+                .replaceSuggestions(ArgumentSuggestions.strings(info ->
+                        SendOnlinePacketListener.getPlayerNames()
+        ));
 
         new CommandAPICommand("money")
                 .withSubcommands(
@@ -44,7 +47,7 @@ public class MoneyCommand {
                         new TransactionsCommand(transactionService, userService).get(),
                         new PayCommand(transactionService, userService, messagingManager).get()
                 )
-                .withOptionalArguments(new OfflinePlayerArgument("player"))
+                .withOptionalArguments(playerArg)
                 .executesPlayer((player, arguments) -> {
                     LanguageManager lang = LanguageManager.instance();
                     var target = arguments.getOptionalByArgument(playerArg).orElse(player);

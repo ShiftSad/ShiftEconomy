@@ -46,4 +46,9 @@ public class SendOnlinePacketListener implements PacketListener<SendOnlinePacket
                 .forEach(allPlayers::add);
 
         return allPlayers.toArray(SimplePlayer[]::new);
-    }}
+    }
+
+    public static String[] getPlayerNames() {
+        return Arrays.stream(getPlayers()).map(SimplePlayer::username).toArray(String[]::new);
+    }
+}

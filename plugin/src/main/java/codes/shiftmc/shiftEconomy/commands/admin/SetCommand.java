@@ -6,7 +6,9 @@ import codes.shiftmc.common.service.UserService;
 import codes.shiftmc.common.util.NumberFormatter;
 import codes.shiftmc.shiftEconomy.ShiftEconomy;
 import codes.shiftmc.shiftEconomy.language.LanguageManager;
+import codes.shiftmc.shiftEconomy.packet.SendOnlinePacketListener;
 import dev.jorel.commandapi.CommandAPICommand;
+import dev.jorel.commandapi.arguments.ArgumentSuggestions;
 import dev.jorel.commandapi.arguments.DoubleArgument;
 import dev.jorel.commandapi.arguments.OfflinePlayerArgument;
 import lombok.AllArgsConstructor;
@@ -29,7 +31,10 @@ public class SetCommand {
     public CommandAPICommand get() {
         return new CommandAPICommand("set")
                 .withArguments(
-                        new OfflinePlayerArgument("target"),
+                        new OfflinePlayerArgument("target")
+                                .replaceSuggestions(ArgumentSuggestions.strings(info ->
+                                      SendOnlinePacketListener.getPlayerNames()
+                                )),
                         new DoubleArgument("amount")
                 )
                 .executes((sender, args) -> {
