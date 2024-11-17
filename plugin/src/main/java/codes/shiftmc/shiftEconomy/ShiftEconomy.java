@@ -8,6 +8,8 @@ import codes.shiftmc.common.connectors.MySQLConnector;
 import codes.shiftmc.common.messaging.EmptyMessagingManager;
 import codes.shiftmc.common.messaging.MessagingManager;
 import codes.shiftmc.common.messaging.RedisMessagingManager;
+import codes.shiftmc.common.messaging.packet.SendOnlinePacket;
+import codes.shiftmc.common.messaging.packet.objects.SimplePlayer;
 import codes.shiftmc.common.model.UserData;
 import codes.shiftmc.common.model.enums.CachingMethod;
 import codes.shiftmc.common.model.enums.MessagingMethod;
@@ -33,9 +35,11 @@ import io.lettuce.core.api.reactive.RedisReactiveCommands;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.ServicePriority;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.util.Collection;
 import java.util.UUID;
 
 public final class ShiftEconomy extends JavaPlugin {
@@ -53,7 +57,7 @@ public final class ShiftEconomy extends JavaPlugin {
     @Override
     public void onEnable() {
         LanguageManager.instance(this);
-        
+
         saveDefaultConfig();
         loadConfigurations();
         connectDataSources();
@@ -76,6 +80,11 @@ public final class ShiftEconomy extends JavaPlugin {
 
         // Register listeners
         Bukkit.getServer().getPluginManager().registerEvents(new AsyncPlayerPreLoginListener(userService), this);
+
+        // Broadcast online players every minute
+        Bukkit.getScheduler().runTaskTimerAsynchronously(this, () -> {
+            messagingManager.sendPacket(new SendOnlinePacket(serverUUID.toString(), getSimplePlayers()));
+        }, 1, 20 * 60);
 
         // Register packets
         messagingManager.addListener(new PaymentPacketListener(userService));
@@ -145,5 +154,16 @@ public final class ShiftEconomy extends JavaPlugin {
             config.createSection("messagingSource", messagingSource.serialize());
             saveConfig();
         } else messagingSource = MessagingSource.deserialize(config.getConfigurationSection("messagingSource").getValues(false));
+    }
+
+    private static SimplePlayer[] getSimplePlayers() {
+        Collection<? extends Player> onlinePlayers = Bukkit.getOnlinePlayers();
+        return onlinePlayers.stream()
+                .map(player -> new SimplePlayer(
+                        ShiftEconomy.serverUUID.toString(),
+                        player.getUniqueId().toString(),
+                        player.getName()
+                ))
+                .toArray(SimplePlayer[]::new);
     }
 }
