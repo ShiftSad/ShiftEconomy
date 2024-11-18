@@ -37,7 +37,8 @@ dependencies {
     implementation("dev.jorel:commandapi-bukkit-shade-mojang-mapped:9.6.0")
 }
 
-final var version = '1.20.6'
+final var paperVersion = '1.21.1'
+final var foliaVersion = '1.20.6'
 final var jvmArgsExternal = [
         '-Dcom.mojang.eula.agree=true'
 ]
@@ -52,16 +53,16 @@ def foliaPlugins = runPaper.downloadPluginsSpec {
 
 tasks {
     runServer {
-        minecraftVersion(version)
-        runDirectory = file("$rootDir/run/paper/$version")
+        minecraftVersion(paperVersion)
+        runDirectory = file("$rootDir/run/paper/$paperVersion")
         jvmArgs = jvmArgsExternal
 
         downloadPlugins.from(paperPlugins)
     }
 
     runPaper.folia.registerTask {
-        minecraftVersion(version)
-        runDirectory = file("$rootDir/run/folia/$version")
+        minecraftVersion(foliaVersion)
+        runDirectory = file("$rootDir/run/folia/$foliaVersion")
         jvmArgs = jvmArgsExternal
 
         downloadPlugins.from(foliaPlugins)

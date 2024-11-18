@@ -40,13 +40,12 @@ import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
 import org.bukkit.plugin.ServicePriority;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 import java.util.UUID;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -94,20 +93,20 @@ public final class ShiftEconomy extends JavaPlugin {
         ).register();
 
         // Register listeners
-        Bukkit.getServer().getPluginManager().registerEvents(new AsyncPlayerPreLoginListener(userService), this);
+        Bukkit.getServer().getPluginManager().registerEvents(new AsyncPlayerPreLoginListener(userService, messagingManager), this);
 
         // Broadcast online players every minute
         executorService.schedule(() -> {
             var packet = new SendOnlinePacket(serverUUID.toString(), getSimplePlayers());
             messagingManager.sendPacket(packet);
-        }, 1, TimeUnit.MINUTES);
+        }, 5, TimeUnit.MINUTES);
 
         // Register packets
         messagingManager.addListener(new SendOnlinePacketListener());
         messagingManager.addListener(new PaymentPacketListener(userService));
     }
 
-    @EventHandler
+    @Override
     public void onLoad() {
         CommandAPI.onLoad(new CommandAPIBukkitConfig(this)
                 .shouldHookPaperReload(true)
@@ -120,26 +119,39 @@ public final class ShiftEconomy extends JavaPlugin {
         TransactionRepository transactionRepository;
         switch (dataSource.storageMethod()) {
             case MONGODB -> {
-                var mongoConnector = new MongoConnector(dataSource.mongodbConnectionUri(), dataSource.database());
-                userRepository = new MongoUserRepository(mongoConnector.getMongoDatabase());
-                transactionRepository = new MongoTransactionRepository(mongoConnector.getMongoDatabase());
+                try {
+                    var mongoConnector = new MongoConnector(dataSource.mongodbConnectionUri(), dataSource.database());
+                    userRepository = new MongoUserRepository(mongoConnector.getMongoDatabase());
+                    transactionRepository = new MongoTransactionRepository(mongoConnector.getMongoDatabase());
+                }
+                catch (IllegalArgumentException e) { throw new RuntimeException("Invalid MongoDB connection URI or database name: " + e.getMessage(), e); }
+                catch (Exception e) { throw new RuntimeException("Failed to initialize MongoDB repositories: " + e.getMessage(), e); }
             }
             case MYSQL -> {
-                var host = dataSource.address().split(":")[0];
-                var port = Integer.parseInt(dataSource.address().split(":")[1]);
-                var mysqlConnector = new MySQLConnector(host, port, dataSource.database(), dataSource.username(), dataSource.password());
-                userRepository = new MySQLUserRepository(mysqlConnector.getConnectionFactory());
-                transactionRepository = new MySQLTransactionRepository(mysqlConnector.getConnectionFactory());
+                try {
+                    var mysqlConnector = getMySQLConnector();
+                    userRepository = new MySQLUserRepository(mysqlConnector.getConnectionFactory());
+                    transactionRepository = new MySQLTransactionRepository(mysqlConnector.getConnectionFactory());
+                }
+                catch (NumberFormatException e) { throw new RuntimeException("Invalid port number in MySQL address: " + dataSource.address(), e); }
+                catch (IllegalArgumentException e) { throw new RuntimeException("Invalid MySQL connection details: " + e.getMessage(), e); }
+                catch (Exception e) { throw new RuntimeException("Failed to initialize MySQL repositories: " + e.getMessage(), e); }
             }
+
             default -> throw new IllegalStateException("Not yet implemented: " + dataSource.storageMethod());
         }
 
         TypeCache<UserData> userDataCache;
         switch (cacheSource.cachingMethod()) {
             case REDIS -> {
-                RedisClient redisClient = RedisClient.create("redis://" + cacheSource.password() + "@" + cacheSource.address() + ":" + cacheSource.port());
-                RedisReactiveCommands<String, String> redisCommands = redisClient.connect().reactive();
-                userDataCache = new RedisTypeCache<>(redisCommands, UserData.class);
+                try {
+                    String redisUri = "redis://" + cacheSource.password() + "@" + cacheSource.address() + ":" + cacheSource.port();
+                    RedisClient redisClient = RedisClient.create(redisUri);
+                    RedisReactiveCommands<String, String> redisCommands = redisClient.connect().reactive();
+                    userDataCache = new RedisTypeCache<>(redisCommands, UserData.class);
+                }
+                catch (IllegalArgumentException e) { throw new RuntimeException("Invalid Redis URI or connection details: " + e.getMessage(), e); }
+                catch (Exception e) { throw new RuntimeException("Failed to initialize Redis cache: " + e.getMessage(), e); }
             }
             case LOCAL -> userDataCache = new LocalTypeCache<>();
 
@@ -154,6 +166,16 @@ public final class ShiftEconomy extends JavaPlugin {
         // Initialize UserService with the repositories and cache
         userService = new UserService(userRepository, userDataCache);
         transactionService = new TransactionService(transactionRepository);
+    }
+
+    private @NotNull MySQLConnector getMySQLConnector() {
+        String[] addressParts = dataSource.address().split(":");
+        if (addressParts.length != 2) {
+            throw new IllegalArgumentException("Invalid MySQL address format. Expected format: 'host:port'");
+        }
+        var host = addressParts[0];
+        var port = Integer.parseInt(addressParts[1]);
+        return new MySQLConnector(host, port, dataSource.database(), dataSource.username(), dataSource.password());
     }
 
     private void loadConfigurations() {
@@ -181,7 +203,7 @@ public final class ShiftEconomy extends JavaPlugin {
         } else messagingSource = MessagingSource.deserialize(config.getConfigurationSection("messagingSource").getValues(false));
     }
 
-    private static SimplePlayer[] getSimplePlayers() {
+    public static SimplePlayer[] getSimplePlayers() {
         Collection<? extends Player> onlinePlayers = Bukkit.getOnlinePlayers();
         return onlinePlayers.stream()
                 .map(player -> new SimplePlayer(
