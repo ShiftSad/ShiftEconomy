@@ -37,14 +37,34 @@ dependencies {
     implementation("dev.jorel:commandapi-bukkit-shade-mojang-mapped:9.6.0")
 }
 
+final var version = '1.20.6'
+final var jvmArgsExternal = [
+        '-Dcom.mojang.eula.agree=true'
+]
+
 def paperPlugins = runPaper.downloadPluginsSpec {
     url("https://github.com/MilkBowl/Vault/releases/download/1.7.3/Vault.jar")
 }
 
+def foliaPlugins = runPaper.downloadPluginsSpec {
+    url("https://github.com/TheNewEconomy/VaultUnlocked/releases/download/2.3.0/VaultUnlocked-2.3.0.jar")
+}
+
 tasks {
     runServer {
-        minecraftVersion("1.21.1")
+        minecraftVersion(version)
+        runDirectory = file("$rootDir/run/paper/$version")
+        jvmArgs = jvmArgsExternal
+
         downloadPlugins.from(paperPlugins)
+    }
+
+    runPaper.folia.registerTask {
+        minecraftVersion(version)
+        runDirectory = file("$rootDir/run/folia/$version")
+        jvmArgs = jvmArgsExternal
+
+        downloadPlugins.from(foliaPlugins)
     }
 
     shadowJar {

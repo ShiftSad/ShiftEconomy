@@ -46,6 +46,10 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.Collection;
 import java.util.UUID;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 @Slf4j
 public final class ShiftEconomy extends JavaPlugin {
@@ -59,6 +63,8 @@ public final class ShiftEconomy extends JavaPlugin {
     private MessagingManager messagingManager;
     private UserService userService;
     private TransactionService transactionService;
+
+    private final ScheduledExecutorService executorService = Executors.newScheduledThreadPool(1);
 
     @Override
     public void onEnable() {
@@ -91,10 +97,10 @@ public final class ShiftEconomy extends JavaPlugin {
         Bukkit.getServer().getPluginManager().registerEvents(new AsyncPlayerPreLoginListener(userService), this);
 
         // Broadcast online players every minute
-        Bukkit.getScheduler().runTaskTimerAsynchronously(this, () -> {
+        executorService.schedule(() -> {
             var packet = new SendOnlinePacket(serverUUID.toString(), getSimplePlayers());
             messagingManager.sendPacket(packet);
-        }, 1, 20);
+        }, 1, TimeUnit.MINUTES);
 
         // Register packets
         messagingManager.addListener(new SendOnlinePacketListener());
