@@ -1,44 +1,44 @@
-# Arquivos de idioma em Português.
+# Arquivos de idioma em português.
 # Todas as mensagens são formatadas como MiniMessages.
 
-# Na maioria das vezes, todos os placeholders utilizáveis já estão presentes
-# na mensagem padrão, a menos que seja dito o contrário.
+# Na maioria das vezes, todos os placeholders utilizáveis já estão presentes na
+# mensagem padrão, a menos que seja informado de outra forma.
 # Você pode criá-los através de uma webui: https://webui.advntr.dev/
 
-generic.error=<red>Algo deu muito errado
-generic.error.stacktrace=<red>Algo deu muito errado: <stacktrace>
+generic.error=<color:#ff806d>Algo deu muito errado
+generic.error.stacktrace=<color:#ff806d>Algo deu muito errado: <stacktrace>
 
-player.balance=<green>O jogador <name> tem <gold><balance>$</gold></green>
-player.balance.error.missing=<red>ERRO: Saldo não encontrado para o jogador
-player.balance.error.not-enough=<red>ERRO: Você não tem dinheiro suficiente
+player.balance=<color:#74dda0>O jogador <color:#009fde><name></color> tem <color:#e89d46><balance>R$</color></color>
+player.balance.error.missing=<color:#ff806d>ERRO: Saldo não encontrado para o jogador
+player.balance.error.not-enough=<color:#ff806d>ERRO: Você não tem dinheiro suficiente
 
-player.top.header=<br><green>TOP 10 jogadores mais ricos<br>
-player.top.footer=<br><green><click:run_command:'/money top <back_upper>..<back_lower>'><<</click> | <click:run_command:'/money top <forward_lower>..<forward_upper>'>>></click>
-player.top.elements=<green><position>. <player_name> - <balance>
+player.top.header=<br><color:#74dda0>--== Jogadores mais ricos ==--<br>
+player.top.footer=<br><color:#74dda0><click:run_command:'/money top <back_upper>..<back_lower>'>◀</click> ☐ <click:run_command:'/money top <forward_lower>..<forward_upper>'>▶</click>
+player.top.elements=<color:#74dda0><color:#91a3ff><position></color> <color:#009fde><player_name></color> - <color:#e89d46><balance>R$</color>
 player.top.position=<number>º
 player.top.missing=Vazio
 
-player.transactions.empty=<red>Nenhuma transação encontrada :(
-player.transactions.header=<br><green>Histórico de Transações<br>
-player.transactions.footer=<br><green><click:run_command:'/money transactions <back_upper>..<back_lower>'><<</click> | <click:run_command:'/money transactions <forward_lower>..<forward_upper>'>>></click>
-player.transactions.receive=<green> + Você recebeu <amount> de <sender>
-player.transactions.send=<red> - Você pagou <amount> para <receiver>
+player.transactions.empty=<color:#ff806d>Nenhuma transação encontrada :(
+player.transactions.header=<br><color:#74dda0>--== Histórico de Transações ==--<br>
+player.transactions.footer=<br><color:#74dda0><click:run_command:'/money transactions <back_upper>..<back_lower>'>◀</click> ☐ <click:run_command:'/money transactions <forward_lower>..<forward_upper>'>▶</click>
+player.transactions.receive=<color:#74dda0> + Você recebeu <color:#e89d46><amount>R$</color> de <color:#009fde><sender></color>
+player.transactions.send=<color:#ff806d> - Você pagou <color:#e89d46><amount>R$</color> para <color:#009fde><receiver></color>
 
-player.pay.sent=<green>Você enviou <amount> para <receiver>
-player.pay.received=<green>Você recebeu <amount> de <sender>
-player.pay.error.cant-send-to-self=<red>ERRO: Você não pode se mandar dinheiro
-player.pay.error.not-found=<red>ERRO: Player não encontrado
-player.pay.error.negative=<red>ERRO: Voce não pode mandar fundos negativos
+player.pay.sent=<color:#74dda0>Você enviou <color:#e89d46><amount>R$</color> para <color:#009fde><receiver></color>
+player.pay.received=<color:#74dda0>Você recebeu <color:#e89d46><amount>R$</color> de <color:#009fde><sender></color>
+player.pay.error.cant-send-to-self=<color:#ff806d>ERRO: Você não pode enviar dinheiro para si mesmo
+player.pay.error.not-found=<color:#ff806d>ERRO: Alvo não encontrado
+player.pay.error.negative=<color:#ff806d>ERRO: Não é possível enviar valores negativos
 
-player.set.balance.set=<green>Você definiu o saldo de <target> para <amount>
-player.set.balance.receive=<green>Seu saldo agora é <amount>, definido por um administrador
+player.set.balance.set=<color:#74dda0>Você definiu o saldo de <color:#009fde><receiver></color> para <color:#009fde><amount></color>
+player.set.balance.receive=<color:#74dda0>Seu saldo agora é <color:#e89d46><amount>R$</color>, definido por um administrador
 
-# Erros relacionados a argumentos de intervalo de inteiros
-player.range.error.big=<red>ERRO: Você não pode ver mais de 15 jogadores de uma vez.
-player.range.error.negative=<red>ERRO: Você não pode ver uma posição negativa.
-player.range.error.numberbig=<red>ERRO: O número é muito grande.
+# Erros relacionados a argumentos de intervalo de números inteiros
+player.range.error.big=<color:#ff806d>ERRO: Você não pode visualizar mais de 15 jogadores de uma vez.
+player.range.error.negative=<color:#ff806d>ERRO: Você não pode visualizar uma posição negativa.
+player.range.error.numberbig=<color:#ff806d>ERRO: O número é muito grande.
 
 # Erros relacionados a comandos gerais
-player.command.error.invalid-arguments=<red> ERRO: Os argumentos fornecidos são inválidos.
+player.command.error.invalid-arguments=<color:#ff806d> ERRO: Os argumentos fornecidos são inválidos.
 
-admin.reload.language.sucess=<green>Linguagens recarregadas com sucesso
+admin.reload.language.sucess=<color:#74dda0>Idiomas recarregados com sucesso
