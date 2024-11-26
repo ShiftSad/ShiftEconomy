@@ -1,4 +1,4 @@
-package codes.shiftmc.shiftEconomy.vault;
+package codes.shiftmc.economy.vault;
 
 import codes.shiftmc.common.model.Transaction;
 import codes.shiftmc.common.model.UserData;

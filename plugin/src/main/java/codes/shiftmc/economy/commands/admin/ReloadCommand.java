@@ -1,6 +1,6 @@
-package codes.shiftmc.shiftEconomy.commands.admin;
+package codes.shiftmc.economy.commands.admin;
 
-import codes.shiftmc.shiftEconomy.language.LanguageManager;
+import codes.shiftmc.economy.language.LanguageManager;
 import dev.jorel.commandapi.CommandAPICommand;
 import lombok.AllArgsConstructor;
 import org.bukkit.command.CommandSender;

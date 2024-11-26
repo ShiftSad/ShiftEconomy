@@ -1,15 +1,15 @@
-package codes.shiftmc.shiftEconomy.commands;
+package codes.shiftmc.economy.commands;
 
 import codes.shiftmc.common.messaging.MessagingManager;
 import codes.shiftmc.common.service.TransactionService;
 import codes.shiftmc.common.service.UserService;
 import codes.shiftmc.common.util.NumberFormatter;
-import codes.shiftmc.shiftEconomy.commands.admin.AdminCommand;
-import codes.shiftmc.shiftEconomy.commands.player.PayCommand;
-import codes.shiftmc.shiftEconomy.commands.player.TopCommand;
-import codes.shiftmc.shiftEconomy.commands.player.TransactionsCommand;
-import codes.shiftmc.shiftEconomy.language.LanguageManager;
-import codes.shiftmc.shiftEconomy.packet.SendOnlinePacketListener;
+import codes.shiftmc.economy.commands.admin.AdminCommand;
+import codes.shiftmc.economy.commands.player.PayCommand;
+import codes.shiftmc.economy.commands.player.TopCommand;
+import codes.shiftmc.economy.commands.player.TransactionsCommand;
+import codes.shiftmc.economy.language.LanguageManager;
+import codes.shiftmc.economy.packet.SendOnlinePacketListener;
 import dev.jorel.commandapi.CommandAPICommand;
 import dev.jorel.commandapi.arguments.ArgumentSuggestions;
 import dev.jorel.commandapi.arguments.OfflinePlayerArgument;

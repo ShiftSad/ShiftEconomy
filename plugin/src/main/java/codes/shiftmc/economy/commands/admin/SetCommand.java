@@ -1,12 +1,12 @@
-package codes.shiftmc.shiftEconomy.commands.admin;
+package codes.shiftmc.economy.commands.admin;
 
 import codes.shiftmc.common.messaging.MessagingManager;
 import codes.shiftmc.common.messaging.packet.PaymentPacket;
 import codes.shiftmc.common.service.UserService;
 import codes.shiftmc.common.util.NumberFormatter;
-import codes.shiftmc.shiftEconomy.ShiftEconomy;
-import codes.shiftmc.shiftEconomy.language.LanguageManager;
-import codes.shiftmc.shiftEconomy.packet.SendOnlinePacketListener;
+import codes.shiftmc.economy.ShiftEconomy;
+import codes.shiftmc.economy.language.LanguageManager;
+import codes.shiftmc.economy.packet.SendOnlinePacketListener;
 import dev.jorel.commandapi.CommandAPICommand;
 import dev.jorel.commandapi.arguments.ArgumentSuggestions;
 import dev.jorel.commandapi.arguments.DoubleArgument;

@@ -1,4 +1,4 @@
-package codes.shiftmc.shiftEconomy.configuration;
+package codes.shiftmc.economy.configuration;
 
 import codes.shiftmc.common.model.enums.StorageMethod;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;

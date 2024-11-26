@@ -1,9 +1,9 @@
-package codes.shiftmc.shiftEconomy.packet;
+package codes.shiftmc.economy.packet;
 
 import codes.shiftmc.common.messaging.PacketListener;
 import codes.shiftmc.common.messaging.packet.SendOnlinePacket;
 import codes.shiftmc.common.messaging.packet.objects.SimplePlayer;
-import codes.shiftmc.shiftEconomy.ShiftEconomy;
+import codes.shiftmc.economy.ShiftEconomy;
 import org.bukkit.Bukkit;
 
 import java.util.ArrayList;

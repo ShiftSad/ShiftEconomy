@@ -1,4 +1,4 @@
-package codes.shiftmc.shiftEconomy.vault;
+package codes.shiftmc.economy.vault;
 
 
 import net.milkbowl.vault.economy.Economy;

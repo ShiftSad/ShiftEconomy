@@ -1,4 +1,4 @@
-package codes.shiftmc.shiftEconomy.listeners;
+package codes.shiftmc.economy.listeners;
 
 import codes.shiftmc.common.messaging.MessagingManager;
 import codes.shiftmc.common.messaging.packet.SendOnlinePacket;
@@ -11,8 +11,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 
-import static codes.shiftmc.shiftEconomy.ShiftEconomy.getSimplePlayers;
-import static codes.shiftmc.shiftEconomy.ShiftEconomy.serverUUID;
+import static codes.shiftmc.economy.ShiftEconomy.getSimplePlayers;
+import static codes.shiftmc.economy.ShiftEconomy.serverUUID;
 
 @AllArgsConstructor
 public class AsyncPlayerPreLoginListener implements Listener {

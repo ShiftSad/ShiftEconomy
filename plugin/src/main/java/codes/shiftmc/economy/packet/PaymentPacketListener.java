@@ -1,15 +1,15 @@
-package codes.shiftmc.shiftEconomy.packet;
+package codes.shiftmc.economy.packet;
 
 import codes.shiftmc.common.messaging.PacketListener;
 import codes.shiftmc.common.messaging.packet.PaymentPacket;
 import codes.shiftmc.common.service.UserService;
 import codes.shiftmc.common.util.NumberFormatter;
-import codes.shiftmc.shiftEconomy.language.LanguageManager;
+import codes.shiftmc.economy.language.LanguageManager;
 import lombok.AllArgsConstructor;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.Bukkit;
 
-import static codes.shiftmc.shiftEconomy.commands.player.TransactionsCommand.nameFromUUID;
+import static codes.shiftmc.economy.commands.player.TransactionsCommand.nameFromUUID;
 
 @AllArgsConstructor
 public class PaymentPacketListener implements PacketListener<PaymentPacket> {

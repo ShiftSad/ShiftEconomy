@@ -1,4 +1,4 @@
-package codes.shiftmc.shiftEconomy.commands.admin;
+package codes.shiftmc.economy.commands.admin;
 
 import codes.shiftmc.common.messaging.MessagingManager;
 import codes.shiftmc.common.service.UserService;

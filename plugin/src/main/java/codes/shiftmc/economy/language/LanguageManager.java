@@ -1,4 +1,4 @@
-package codes.shiftmc.shiftEconomy.language;
+package codes.shiftmc.economy.language;
 
 import lombok.extern.slf4j.Slf4j;
 import net.kyori.adventure.text.Component;
