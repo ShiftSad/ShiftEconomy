@@ -5,40 +5,40 @@
 # default message, unless otherwise told.
 # You can create then thorough a webui: https://webui.advntr.dev/
 
-generic.error=<red>Something went terribly wrong
-generic.error.stacktrace=<red>Something went terribly wrong: <stacktrace>
+generic.error=<color:#ff806d>Something went terribly wrong
+generic.error.stacktrace=<color:#ff806d>Something went terribly wrong: <stacktrace>
 
-player.balance=<green>Player <name> has <gold><balance>$</gold></green>
-player.balance.error.missing=<red>ERROR: Balance not found for player
-player.balance.error.not-enough=<red>ERROR: You don't have enough money
+player.balance=<color:#74dda0>Player <color:#009fde><name></color> has <color:#e89d46><balance>$</color></color>
+player.balance.error.missing=<color:#ff806d>ERROR: Balance not found for player
+player.balance.error.not-enough=<color:#ff806d>ERROR: You don't have enough money
 
-player.top.header=<br><green>TOP 10 richest players<br>
-player.top.footer=<br><green><click:run_command:'/money top <back_upper>..<back_lower>'><<</click> | <click:run_command:'/money top <forward_lower>..<forward_upper>'>>></click>
-player.top.elements=<green><position>. <player_name> - <balance>
+player.top.header=<br><color:#74dda0>--== Richest players ==--<br>
+player.top.footer=<br><color:#74dda0><click:run_command:'/money top <back_upper>..<back_lower>'>◀</click> ☐ <click:run_command:'/money top <forward_lower>..<forward_upper>'>▶</click>
+player.top.elements=<color:#74dda0><color:#91a3ff><position></color> <color:#009fde><player_name></color> - <color:#e89d46><balance>$</color>
 player.top.position=<number>º
 player.top.missing=Empty
 
-player.transactions.empty=<red>No transactions found :(
-player.transactions.header=<br><green>Transactions History<br>
-player.transactions.footer=<br><green><click:run_command:'/money transactions <back_upper>..<back_lower>'><<</click> | <click:run_command:'/money transactions <forward_lower>..<forward_upper>'>>></click>
-player.transactions.receive=<green> + You received <amount> from <sender>
-player.transactions.send=<red> - You paid <amount> to <receiver>
+player.transactions.empty=<color:#ff806d>No transactions found :(
+player.transactions.header=<br><color:#74dda0>--== Transactions History ==--<br>
+player.transactions.footer=<br><color:#74dda0><click:run_command:'/money transactions <back_upper>..<back_lower>'>◀</click> ☐ <click:run_command:'/money transactions <forward_lower>..<forward_upper>'>▶</click>
+player.transactions.receive=<color:#74dda0> + You received <color:#e89d46><amount>$</color> from <color:#009fde><sender></color>
+player.transactions.send=<color:#ff806d> - You paid <color:#e89d46><amount>$</color> to <color:#009fde><receiver></color>
 
-player.pay.sent=<green>You sent <amount> to <receiver>
-player.pay.received=<green>You received <amount> from <sender>
-player.pay.error.cant-send-to-self=<red>ERROR: You can't send money to yourself
-player.pay.error.not-found=<red>ERROR: Target not found
-player.pay.error.negative=<red>ERROR: Can't send negative funds
+player.pay.sent=<color:#74dda0>You sent <color:#e89d46><amount>$</color> to <color:#009fde><receiver></color>
+player.pay.received=<color:#74dda0>You received <color:#e89d46><amount>$</color> from <color:#009fde><sender></color>
+player.pay.error.cant-send-to-self=<color:#ff806d>ERROR: You can't send money to yourself
+player.pay.error.not-found=<color:#ff806d>ERROR: Target not found
+player.pay.error.negative=<color:#ff806d>ERROR: Can't send negative funds
 
-player.set.balance.set=<green>You set <receiver>'s balance to <amount>
-player.set.balance.receive=<green>Your balance is now <amount>, set by an admin
+player.set.balance.set=<color:#74dda0>You set <color:#009fde><receiver></color>'s balance to <color:#009fde><amount></color>
+player.set.balance.receive=<color:#74dda0>Your balance is now <color:#e89d46><amount>$</color>, set by an admin
 
 # Errors related to integer range arguments
-player.range.error.big=<red>ERROR: You cannot view more than 15 players at once.
-player.range.error.negative=<red>ERROR: You cannot view a negative place.
-player.range.error.numberbig=<red>ERROR: Number is way to big.
+player.range.error.big=<color:#ff806d>ERROR: You cannot view more than 15 players at once.
+player.range.error.negative=<color:#ff806d>ERROR: You cannot view a negative place.
+player.range.error.numberbig=<color:#ff806d>ERROR: Number is way to big.
 
 # Errors related to general commands
-player.command.error.invalid-arguments=<red> ERROR: The arguments provided are invalid.
+player.command.error.invalid-arguments=<color:#ff806d> ERROR: The arguments provided are invalid.
 
-admin.reload.language.sucess=<green>Reload languages successfully
+admin.reload.language.sucess=<color:#74dda0>Reload languages successfully
