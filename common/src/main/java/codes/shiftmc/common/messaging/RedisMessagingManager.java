@@ -37,7 +37,7 @@ public class RedisMessagingManager extends MessagingManager {
     @Override
     public void sendPacket(ShiftPacket packet) {
         JsonObject jsonObject = gson.toJsonTree(packet).getAsJsonObject();
-        jsonObject.addProperty("packetType", packet.getClass().getSimpleName()); // Add packet type
+        jsonObject.addProperty("packetType", packet.getClass().getSimpleName()); // Add a packet type
         String json = gson.toJson(jsonObject);
         connection.reactive().publish(CHANNEL_NAME, json).subscribe();
     }
@@ -53,7 +53,6 @@ public class RedisMessagingManager extends MessagingManager {
     }
 
     private void handleIncomingMessage(String message) {
-        
         try {
             ShiftPacket packet = gson.fromJson(message, ShiftPacket.class);
             if (packet != null) handleIncomingPacket(packet);

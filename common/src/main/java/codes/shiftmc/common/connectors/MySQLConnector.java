@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Mono;
 
+import java.net.URI;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -19,7 +20,29 @@ public class MySQLConnector {
     @Getter private final ConnectionFactory connectionFactory;
     private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
 
-    public MySQLConnector(String host, int port, String database, String username, String password) {
+    public MySQLConnector(String jdbcUrl) {
+        if (!jdbcUrl.startsWith("jdbc:mysql://") || !jdbcUrl.startsWith("r2dbc:mysql://")) {
+            throw new IllegalArgumentException("Invalid JDBC URL format. Expected format: jdbc:mysql://username:password@host:port/database");
+        }
+
+        // Parse the JDBC URL
+        String r2dbcUrl = jdbcUrl.replace("jdbc:mysql://", "r2dbc:mysql://");
+        URI uri = URI.create(r2dbcUrl);
+
+        // Extract user info
+        String userInfo = uri.getUserInfo();
+        if (userInfo == null || !userInfo.contains(":")) {
+            throw new IllegalArgumentException("Invalid JDBC URL: Missing or malformed username and password.");
+        }
+
+        String username = userInfo.split(":")[0];
+        String password = userInfo.split(":")[1];
+
+        // Extract host, port, and database
+        String host = uri.getHost();
+        int port = uri.getPort() > 0 ? uri.getPort() : 3306;
+        String database = uri.getPath().substring(1);
+
         this.connectionFactory = ConnectionFactories.get(ConnectionFactoryOptions.builder()
                 .option(DRIVER, "mysql")
                 .option(HOST, host)
@@ -29,11 +52,11 @@ public class MySQLConnector {
                 .option(DATABASE, database)
                 .build());
 
-        initializeDatabase();
-        startDatabasePing();
+        initializeDatabase(connectionFactory);
+        startDatabasePing(scheduler, connectionFactory);
     }
 
-    private void initializeDatabase() {
+    protected static void initializeDatabase(ConnectionFactory connectionFactory) {
         String createUsersTable = """
             CREATE TABLE IF NOT EXISTS users (
                 uUID CHAR(36) PRIMARY KEY,
@@ -66,7 +89,7 @@ public class MySQLConnector {
                 );
     }
 
-    private void startDatabasePing() {
+    protected static void startDatabasePing(ScheduledExecutorService scheduler, ConnectionFactory connectionFactory) {
         scheduler.scheduleAtFixedRate(() ->
                         Mono.from(connectionFactory.create())
                                 .flatMap(connection -> Mono.from(connection.createStatement("SELECT 1").execute())

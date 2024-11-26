@@ -3,6 +3,7 @@ package codes.shiftmc.shiftEconomy;
 import codes.shiftmc.common.cache.LocalTypeCache;
 import codes.shiftmc.common.cache.RedisTypeCache;
 import codes.shiftmc.common.cache.TypeCache;
+import codes.shiftmc.common.connectors.H2Connector;
 import codes.shiftmc.common.connectors.MongoConnector;
 import codes.shiftmc.common.connectors.MySQLConnector;
 import codes.shiftmc.common.messaging.EmptyMessagingManager;
@@ -124,19 +125,26 @@ public final class ShiftEconomy extends JavaPlugin {
                     userRepository = new MongoUserRepository(mongoConnector.getMongoDatabase());
                     transactionRepository = new MongoTransactionRepository(mongoConnector.getMongoDatabase());
                 }
-                catch (IllegalArgumentException e) { throw new RuntimeException("Invalid MongoDB connection URI or database name: " + e.getMessage(), e); }
-                catch (Exception e) { throw new RuntimeException("Failed to initialize MongoDB repositories: " + e.getMessage(), e); }
+                catch (IllegalArgumentException e) { throw new RuntimeException("Invalid MongoDB connection URI or database name: " + e.getMessage()); }
+                catch (Exception e) { throw new RuntimeException("Failed to initialize MongoDB repositories: " + e.getMessage()); }
             }
             case MYSQL -> {
                 try {
-                    var mysqlConnector = getMySQLConnector();
+                    var mysqlConnector = new MySQLConnector(dataSource.jdbcUrl());
                     userRepository = new MySQLUserRepository(mysqlConnector.getConnectionFactory());
                     transactionRepository = new MySQLTransactionRepository(mysqlConnector.getConnectionFactory());
                 }
-                catch (NumberFormatException e) { throw new RuntimeException("Invalid port number in MySQL address: " + dataSource.address(), e); }
-                catch (IllegalArgumentException e) { throw new RuntimeException("Invalid MySQL connection details: " + e.getMessage(), e); }
-                catch (Exception e) { throw new RuntimeException("Failed to initialize MySQL repositories: " + e.getMessage(), e); }
+                catch (IllegalArgumentException e) { throw new RuntimeException("Invalid MySQL connection details: " + e.getMessage()); }
+                catch (Exception e) { throw new RuntimeException("Failed to initialize MySQL repositories: " + e.getMessage()); }
             }
+            case H2 -> {
+                try {
+                    var h2Connector = new H2Connector(dataSource.jdbcUrl());
+                    userRepository = new MySQLUserRepository(h2Connector.getConnectionFactory());
+                    transactionRepository = new MySQLTransactionRepository(h2Connector.getConnectionFactory());
+                } catch (Exception e) { throw new RuntimeException("Failed to initialize H2 repositories: " + e.getMessage()); }
+            }
+
 
             default -> throw new IllegalStateException("Not yet implemented: " + dataSource.storageMethod());
         }
@@ -150,8 +158,8 @@ public final class ShiftEconomy extends JavaPlugin {
                     RedisReactiveCommands<String, String> redisCommands = redisClient.connect().reactive();
                     userDataCache = new RedisTypeCache<>(redisCommands, UserData.class);
                 }
-                catch (IllegalArgumentException e) { throw new RuntimeException("Invalid Redis URI or connection details: " + e.getMessage(), e); }
-                catch (Exception e) { throw new RuntimeException("Failed to initialize Redis cache: " + e.getMessage(), e); }
+                catch (IllegalArgumentException e) { throw new RuntimeException("Invalid Redis URI or connection details: " + e.getMessage()); }
+                catch (Exception e) { throw new RuntimeException("Failed to initialize Redis cache: " + e.getMessage()); }
             }
             case LOCAL -> userDataCache = new LocalTypeCache<>();
 
@@ -168,29 +176,21 @@ public final class ShiftEconomy extends JavaPlugin {
         transactionService = new TransactionService(transactionRepository);
     }
 
-    private @NotNull MySQLConnector getMySQLConnector() {
-        String[] addressParts = dataSource.address().split(":");
-        if (addressParts.length != 2) {
-            throw new IllegalArgumentException("Invalid MySQL address format. Expected format: 'host:port'");
-        }
-        var host = addressParts[0];
-        var port = Integer.parseInt(addressParts[1]);
-        return new MySQLConnector(host, port, dataSource.database(), dataSource.username(), dataSource.password());
-    }
-
     private void loadConfigurations() {
         FileConfiguration config = getConfig();
 
         // Load or save default DataSource
         if (!config.contains("dataSource")) {
-            dataSource = new DataSource(StorageMethod.MONGODB, "localhost", "money", "user", "password", "mongodb+srv://");
+            dataSource = new DataSource(StorageMethod.H2, "money",
+                    "mongodb+srv://", "jdbc:h2:./database/shiftEconomy;MODE=MySQL"
+            );
             config.createSection("dataSource", dataSource.serialize());
             saveConfig();
         } else dataSource = DataSource.deserialize(config.getConfigurationSection("dataSource").getValues(false));
 
         // Load or save default CacheSource
         if (!config.contains("cacheSource")) {
-            cacheSource = new CacheSource(CachingMethod.REDIS, "localhost", 6379, "redispassword");
+            cacheSource = new CacheSource(CachingMethod.LOCAL, "localhost", 6379, "redispassword");
             config.createSection("cacheSource", cacheSource.serialize());
             saveConfig();
         } else cacheSource = CacheSource.deserialize(config.getConfigurationSection("cacheSource").getValues(false));
