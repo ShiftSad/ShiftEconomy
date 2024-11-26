@@ -11,6 +11,8 @@ import java.net.URI;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static io.r2dbc.spi.ConnectionFactoryOptions.*;
 
@@ -21,27 +23,28 @@ public class MySQLConnector {
     private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
 
     public MySQLConnector(String jdbcUrl) {
-        if (!jdbcUrl.startsWith("jdbc:mysql://") || !jdbcUrl.startsWith("r2dbc:mysql://")) {
+        if (!jdbcUrl.startsWith("jdbc:mysql://") && !jdbcUrl.startsWith("r2dbc:mysql://")) {
             throw new IllegalArgumentException("Invalid JDBC URL format. Expected format: jdbc:mysql://username:password@host:port/database");
         }
 
-        // Parse the JDBC URL
+        // Transform to R2DBC URL
         String r2dbcUrl = jdbcUrl.replace("jdbc:mysql://", "r2dbc:mysql://");
-        URI uri = URI.create(r2dbcUrl);
 
-        // Extract user info
-        String userInfo = uri.getUserInfo();
-        if (userInfo == null || !userInfo.contains(":")) {
-            throw new IllegalArgumentException("Invalid JDBC URL: Missing or malformed username and password.");
+        // Parse the URL manually
+        Pattern pattern = Pattern.compile(
+                "r2dbc:mysql://(?<username>[^:]+):(?<password>[^@]+)@(?<host>[^:]+):(?<port>\\d+)/(?<database>.+)"
+        );
+        Matcher matcher = pattern.matcher(r2dbcUrl);
+
+        if (!matcher.matches()) {
+            throw new IllegalArgumentException("Invalid JDBC URL format. Expected format: jdbc:mysql://username:password@host:port/database");
         }
 
-        String username = userInfo.split(":")[0];
-        String password = userInfo.split(":")[1];
-
-        // Extract host, port, and database
-        String host = uri.getHost();
-        int port = uri.getPort() > 0 ? uri.getPort() : 3306;
-        String database = uri.getPath().substring(1);
+        String username = matcher.group("username");
+        String password = matcher.group("password");
+        String host = matcher.group("host");
+        int port = Integer.parseInt(matcher.group("port"));
+        String database = matcher.group("database");
 
         this.connectionFactory = ConnectionFactories.get(ConnectionFactoryOptions.builder()
                 .option(DRIVER, "mysql")
