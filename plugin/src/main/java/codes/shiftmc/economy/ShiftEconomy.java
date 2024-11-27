@@ -181,7 +181,7 @@ public final class ShiftEconomy extends JavaPlugin {
         // Load or save default DataSource
         if (!config.contains("dataSource")) {
             dataSource = new DataSource(StorageMethod.H2, "money",
-                    "mongodb+srv://", "jdbc:h2:./database/shiftEconomy;MODE=MySQL"
+                    "mongodb+srv://", "jdbc:h2:.\\" + getDataFolder() + "\\database;MODE=MySQL"
             );
             config.createSection("dataSource", dataSource.serialize());
             saveConfig();
