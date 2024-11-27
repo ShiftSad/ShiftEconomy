@@ -30,7 +30,7 @@ player.pay.error.cant-send-to-self=<color:#ff806d>ERRO: Você não pode enviar d
 player.pay.error.not-found=<color:#ff806d>ERRO: Alvo não encontrado
 player.pay.error.negative=<color:#ff806d>ERRO: Não é possível enviar valores negativos
 
-player.set.balance.set=<color:#74dda0>Você definiu o saldo de <color:#009fde><receiver></color> para <color:#009fde><amount></color>
+player.set.balance.set=<color:#74dda0>Você definiu o saldo de <color:#009fde><receiver></color> para <color:#e89d46><amount></color>
 player.set.balance.receive=<color:#74dda0>Seu saldo agora é <color:#e89d46><amount>R$</color>, definido por um administrador
 
 # Erros relacionados a argumentos de intervalo de números inteiros
