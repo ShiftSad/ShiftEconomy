@@ -29,7 +29,7 @@ public class SendOnlinePacketListener implements PacketListener<SendOnlinePacket
         playerCache.put(uuid, players);
     }
 
-    // Returns all cached players + online ones
+    // Returns all cached players and online ones
     public static SimplePlayer[] getPlayers() {
         Collection<SimplePlayer> allPlayers = new ArrayList<>();
 

@@ -68,5 +68,6 @@ public class EconomyExpansion extends PlaceholderExpansion {
                 }
             }
         }
+        return "Unknown placeholder";
     }
 }

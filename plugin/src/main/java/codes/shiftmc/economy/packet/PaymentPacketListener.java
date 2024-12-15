@@ -31,14 +31,15 @@ public class PaymentPacketListener implements PacketListener<PaymentPacket> {
         nameFromUUID(packet.senderUUID(), userService)
                 .doOnNext(name -> {
                     switch (packet.type()) {
-                        case PaymentPacket.PaymentType.PAY -> lang.sendMessage(receiver, "player.pay.received",
-                                                                               Placeholder.unparsed("sender", name),
-                                                                               Placeholder.unparsed("amount", NumberFormatter.format(packet.amount())));
-                        case PaymentPacket.PaymentType.SET -> lang.sendMessage(receiver, "player.set.balance.receive",
-                                                                               Placeholder.unparsed("sender", name),
-                                                                               Placeholder.unparsed("amount", NumberFormatter.format(packet.amount())));
+                        case PaymentPacket.PaymentType.PAY ->
+                                lang.sendMessage(receiver, "player.pay.received",
+                                                 Placeholder.unparsed("sender", name),
+                                                 Placeholder.unparsed("amount", NumberFormatter.format(packet.amount())));
+                        case PaymentPacket.PaymentType.SET ->
+                                lang.sendMessage(receiver, "player.set.balance.receive",
+                                                 Placeholder.unparsed("sender", name),
+                                                 Placeholder.unparsed("amount", NumberFormatter.format(packet.amount())));
                     }
-
                 })
                 .subscribe();
     }
