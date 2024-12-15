@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -379,4 +380,72 @@ public final class LanguageManager {
         else return getRawMessage(message);
     }
 
+    /**
+     * Retrieves the raw message string for an OfflinePlayer.
+     * If the language or message key is not found, returns a default fallback message.
+     *
+     * @param offlinePlayer the OfflinePlayer to query the language
+     * @param message       the message key to retrieve
+     * @return the raw message string if found, or a default fallback message
+     */
+    @NotNull
+    public String getRawMessage(@NotNull OfflinePlayer offlinePlayer, @NotNull String message) {
+        String language = getOfflinePlayerLanguage(offlinePlayer);
+        return getRawMessage(language, message);
+    }
+
+    /**
+     * Retrieves the localized message component for an OfflinePlayer.
+     *
+     * @param offlinePlayer the OfflinePlayer to query the language
+     * @param message       the message key to retrieve
+     * @return the localized message component
+     */
+    @NotNull
+    public Component getMessage(@NotNull OfflinePlayer offlinePlayer, @NotNull String message) {
+        String language = getOfflinePlayerLanguage(offlinePlayer);
+        return getMessage(language, message);
+    }
+
+    /**
+     * Sends a localized message to an OfflinePlayer.
+     * If the OfflinePlayer is online, sends the message to their player instance.
+     *
+     * @param offlinePlayer the OfflinePlayer to send the message to
+     * @param message       the message key to retrieve and send
+     */
+    public void sendMessage(@NotNull OfflinePlayer offlinePlayer, @NotNull String message) {
+        if (offlinePlayer.isOnline() && offlinePlayer.getPlayer() != null) {
+            sendMessage(offlinePlayer.getPlayer(), message);
+        }
+    }
+
+    /**
+     * Sends a localized message with placeholders to an OfflinePlayer.
+     * If the OfflinePlayer is online, sends the message to their player instance.
+     *
+     * @param offlinePlayer the OfflinePlayer to send the message to
+     * @param message       the message key to retrieve and send
+     * @param placeholders  the placeholders to resolve within the message
+     */
+    public void sendMessage(@NotNull OfflinePlayer offlinePlayer, @NotNull String message, @NotNull TagResolver... placeholders) {
+        if (offlinePlayer.isOnline() && offlinePlayer.getPlayer() != null) {
+            sendMessage(offlinePlayer.getPlayer(), message, placeholders);
+        }
+    }
+
+    /**
+     * Retrieves the language of an OfflinePlayer.
+     * Defaulting to `DEFAULT_LANGUAGE` if unavailable.
+     *
+     * @param offlinePlayer the OfflinePlayer to query the language
+     * @return the language code
+     */
+    @NotNull
+    private String getOfflinePlayerLanguage(@NotNull OfflinePlayer offlinePlayer) {
+        if (offlinePlayer.isOnline() && offlinePlayer.getPlayer() != null) {
+            return offlinePlayer.getPlayer().locale().toLanguageTag();
+        }
+        return DEFAULT_LANGUAGE;
+    }
 }
