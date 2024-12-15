@@ -31,6 +31,7 @@ import codes.shiftmc.economy.language.LanguageManager;
 import codes.shiftmc.economy.listeners.AsyncPlayerPreLoginListener;
 import codes.shiftmc.economy.packet.PaymentPacketListener;
 import codes.shiftmc.economy.packet.SendOnlinePacketListener;
+import codes.shiftmc.economy.placeholderapi.EconomyExpansion;
 import codes.shiftmc.economy.vault.VaultEconomyHook;
 import dev.jorel.commandapi.CommandAPI;
 import dev.jorel.commandapi.CommandAPIBukkitConfig;
@@ -41,6 +42,7 @@ import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
+import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.plugin.ServicePriority;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -107,6 +109,7 @@ public final class ShiftEconomy extends JavaPlugin {
 
         // Register PlaceholderAPI
         if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
+            new EconomyExpansion(userService).register();
             log.info("PlaceholderAPI found, registering it.");
         } else {
             log.info("PlaceholderAPI not found, ignoring.");

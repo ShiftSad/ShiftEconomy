@@ -3,8 +3,7 @@ package codes.shiftmc.economy.placeholderapi;
 import codes.shiftmc.common.model.UserData;
 import codes.shiftmc.common.service.UserService;
 import codes.shiftmc.common.util.NumberFormatter;
-import com.google.common.collect.Queues;
-import lombok.AllArgsConstructor;
+import codes.shiftmc.economy.language.LanguageManager;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
@@ -54,17 +53,24 @@ public class EconomyExpansion extends PlaceholderExpansion {
 
     @Override
     public String onRequest(OfflinePlayer player, String params) {
+        var lang = LanguageManager.instance();
         final var args = params.split("_");
         switch (args[0]) {
             case "rank" -> {
-                var position = Integer.parseInt(args[2]);
+                var position = Integer.parseInt(args[2]) - 1;
+                UserData user;
+                if (position < 0 || position >= users.size()) {
+                    user = new UserData(UUID.randomUUID(), lang.getRawMessage(player, "player.top.missing"), 0);
+                } else {
+                    user = users.get(position);
+                }
                 switch (args[1]) {
                     case "playername":
-                        return users.get(position).getUsername();
+                        return user.getUsername();
                     case "balance-format":
-                        return NumberFormatter.format(users.get(position).getBalance());
+                        return NumberFormatter.format(user.getBalance());
                     case "balance":
-                        return String.valueOf(users.get(position).getBalance());
+                        return String.valueOf(user.getBalance());
                 }
             }
         }
