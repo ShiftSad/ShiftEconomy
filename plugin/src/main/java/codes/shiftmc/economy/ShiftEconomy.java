@@ -104,6 +104,13 @@ public final class ShiftEconomy extends JavaPlugin {
         // Register packets
         messagingManager.addListener(new SendOnlinePacketListener());
         messagingManager.addListener(new PaymentPacketListener(userService));
+
+        // Register PlaceholderAPI
+        if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
+            log.info("PlaceholderAPI found, registering it.");
+        } else {
+            log.info("PlaceholderAPI not found, ignoring.");
+        }
     }
 
     @Override

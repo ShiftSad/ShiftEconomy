@@ -19,6 +19,8 @@ repositories {
     }
     maven { url = "https://jitpack.io/" }
     maven { url = "https://repo.codemc.org/repository/maven-public/" }
+    maven { url = 'https://repo.extendedclip.com/content/repositories/placeholderapi/' }
+
 }
 
 dependencies {
@@ -37,6 +39,7 @@ dependencies {
     compileOnly("org.projectlombok:lombok:1.18.34")
     annotationProcessor("org.projectlombok:lombok:1.18.34")
 
+    compileOnly("me.clip:placeholderapi:2.11.6")
     implementation("dev.jorel:commandapi-bukkit-shade-mojang-mapped:9.6.0")
 }
 
@@ -49,10 +52,12 @@ final var jvmArgsExternal = [
 
 def paperPlugins = runPaper.downloadPluginsSpec {
     url("https://github.com/MilkBowl/Vault/releases/download/1.7.3/Vault.jar")
+    url("https://ci.extendedclip.com/job/PlaceholderAPI/200/artifact/build/libs/PlaceholderAPI-2.11.7-DEV-200.jar")
 }
 
 def foliaPlugins = runPaper.downloadPluginsSpec {
     url("https://github.com/TheNewEconomy/VaultUnlocked/releases/download/2.3.0/VaultUnlocked-2.3.0.jar")
+    url("https://ci.extendedclip.com/job/PlaceholderAPI/200/artifact/build/libs/PlaceholderAPI-2.11.7-DEV-200.jar")
 }
 
 tasks {
