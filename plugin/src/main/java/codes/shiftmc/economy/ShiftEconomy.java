@@ -94,6 +94,7 @@ public final class ShiftEconomy extends JavaPlugin {
                 userService,
                 transactionService,
                 messagingManager,
+                settingsSource,
                 this
         ).register();
 

@@ -8,6 +8,7 @@ import codes.shiftmc.economy.commands.admin.AdminCommand;
 import codes.shiftmc.economy.commands.player.PayCommand;
 import codes.shiftmc.economy.commands.player.TopCommand;
 import codes.shiftmc.economy.commands.player.TransactionsCommand;
+import codes.shiftmc.economy.configuration.SettingsSource;
 import codes.shiftmc.economy.language.LanguageManager;
 import codes.shiftmc.economy.packet.SendOnlinePacketListener;
 import dev.jorel.commandapi.CommandAPICommand;
@@ -29,6 +30,7 @@ public class MoneyCommand {
     private final UserService userService;
     private final TransactionService transactionService;
     private final MessagingManager messagingManager;
+    private final SettingsSource settingsSource;
     private final JavaPlugin plugin;
 
     public void register() {
@@ -40,7 +42,7 @@ public class MoneyCommand {
         new CommandAPICommand("money")
                 .withPermission("shifteconomy.money.player")
                 .withSubcommands(
-                        new AdminCommand(userService, messagingManager, plugin).get(),
+                        new AdminCommand(userService, messagingManager, settingsSource, plugin).get(),
                         new TopCommand(userService).get(),
                         new TransactionsCommand(transactionService, userService).get(),
                         new PayCommand(transactionService, userService, messagingManager).get()

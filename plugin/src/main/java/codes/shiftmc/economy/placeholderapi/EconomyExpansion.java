@@ -61,9 +61,8 @@ public class EconomyExpansion extends PlaceholderExpansion {
                 UserData user;
                 if (position < 0 || position >= users.size()) {
                     user = new UserData(UUID.randomUUID(), lang.getRawMessage(player, "player.top.missing"), 0);
-                } else {
-                    user = users.get(position);
-                }
+                } else user = users.get(position);
+
                 switch (args[1]) {
                     case "playername":
                         return user.getUsername();
