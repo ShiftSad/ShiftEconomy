@@ -12,12 +12,14 @@ dataSource:
   address: localhost
   mongodbConnectionUri: mongodb://localhost:27017
   username: user
+
 cacheSource:
   # REDIS, LOCAL
   cachingMethod: REDIS
   password:
   address: localhost
   port: 6379
+
 messagingSource:
   # REDIS, NONE
   messagingMethod: REDIS
