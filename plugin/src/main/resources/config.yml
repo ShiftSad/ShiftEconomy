@@ -1,0 +1,23 @@
+settings:
+  # Language to fall back to when no matching is found
+  default-language: en-US
+  # Initial account value 
+  start-money: 0
+
+dataSource:
+  # MONGODB, MYSQL, H2
+  storageMethod: MONGODB
+  database: money
+  password: password
+  address: localhost
+  mongodbConnectionUri: mongodb://localhost:27017
+  username: user
+cacheSource:
+  # REDIS, LOCAL
+  cachingMethod: REDIS
+  password:
+  address: localhost
+  port: 6379
+messagingSource:
+  # REDIS, NONE
+  messagingMethod: REDIS

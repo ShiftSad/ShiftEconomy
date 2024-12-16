@@ -1,5 +1,6 @@
 package codes.shiftmc.economy.commands.admin;
 
+import codes.shiftmc.economy.configuration.SettingsSource;
 import codes.shiftmc.economy.language.LanguageManager;
 import dev.jorel.commandapi.CommandAPICommand;
 import lombok.AllArgsConstructor;
@@ -10,6 +11,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 public class ReloadCommand {
 
     private final JavaPlugin plugin;
+    private final SettingsSource settings;
 
     public CommandAPICommand get() {
         return new CommandAPICommand("reload")
@@ -28,8 +30,8 @@ public class ReloadCommand {
     }
 
     private void reloadLanguage(CommandSender sender) {
-        var lang = LanguageManager.instance(plugin);
-        lang = lang.reload();
+        var lang = LanguageManager.instance(plugin, settings);
+        lang = lang.reload(settings);
 
         lang.sendMessage(sender, "admin.reload.language.sucess");
     }

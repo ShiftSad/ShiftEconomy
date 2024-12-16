@@ -55,7 +55,7 @@ public class VaultEconomyHook extends EconomyWrapper {
 
     @Override
     public EconomyResponse withdrawPlayer(OfflinePlayer offlinePlayer, double amount) {
-        // Check if user has enough balance and withdraw if possible
+        // Check if user has enough balances and withdraw if possible
         Mono<UserData> userMono = userService.findByUuid(offlinePlayer.getUniqueId());
         return userMono.flatMap(user -> {
             if (user.getBalance() < amount)
@@ -89,13 +89,12 @@ public class VaultEconomyHook extends EconomyWrapper {
 
     @Override
     public boolean createPlayerAccount(OfflinePlayer offlinePlayer) {
-        // Create new user account if it does not exist
+        // Create a new user account if it does not exist
         boolean present = userService.findByUuid(offlinePlayer.getUniqueId()).blockOptional().isPresent();
         if (!present) {
             userService.save(new UserData(offlinePlayer.getUniqueId(), offlinePlayer.getName(), 0.0)).subscribe();
-            present = true;
         }
 
-        return present;
+        return true;
     }
 }

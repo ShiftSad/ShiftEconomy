@@ -27,6 +27,7 @@ import codes.shiftmc.economy.commands.MoneyCommand;
 import codes.shiftmc.economy.configuration.CacheSource;
 import codes.shiftmc.economy.configuration.DataSource;
 import codes.shiftmc.economy.configuration.MessagingSource;
+import codes.shiftmc.economy.configuration.SettingsSource;
 import codes.shiftmc.economy.language.LanguageManager;
 import codes.shiftmc.economy.listeners.AsyncPlayerPreLoginListener;
 import codes.shiftmc.economy.packet.PaymentPacketListener;
@@ -60,6 +61,7 @@ public final class ShiftEconomy extends JavaPlugin {
     private DataSource dataSource;
     private CacheSource cacheSource;
     private MessagingSource messagingSource;
+    private SettingsSource settingsSource;
 
     private MessagingManager messagingManager;
     private UserService userService;
@@ -71,8 +73,9 @@ public final class ShiftEconomy extends JavaPlugin {
     public void onEnable() {
         // Shading CommandAPI
         CommandAPI.onEnable();
+        saveDefaultConfig();
 
-        LanguageManager.instance(this);
+        LanguageManager.instance(this, settingsSource);
 
         saveDefaultConfig();
         loadConfigurations();
@@ -95,7 +98,7 @@ public final class ShiftEconomy extends JavaPlugin {
         ).register();
 
         // Register listeners
-        Bukkit.getServer().getPluginManager().registerEvents(new AsyncPlayerPreLoginListener(userService, messagingManager), this);
+        Bukkit.getServer().getPluginManager().registerEvents(new AsyncPlayerPreLoginListener(userService, messagingManager, settingsSource), this);
 
         // Broadcast online players every minute
         executorService.schedule(() -> {
@@ -210,6 +213,12 @@ public final class ShiftEconomy extends JavaPlugin {
             config.createSection("messagingSource", messagingSource.serialize());
             saveConfig();
         } else messagingSource = MessagingSource.deserialize(config.getConfigurationSection("messagingSource").getValues(false));
+
+        if (!config.contains("settings")) {
+            settingsSource = new SettingsSource("en-US", 0);
+            config.createSection("settings", settingsSource.serialize());
+            saveConfig();
+        } else settingsSource = SettingsSource.deserialize(config.getConfigurationSection("settings").getValues(false));
     }
 
     public static SimplePlayer[] getSimplePlayers() {

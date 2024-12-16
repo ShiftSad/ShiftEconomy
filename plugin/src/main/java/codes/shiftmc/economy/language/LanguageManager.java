@@ -1,5 +1,6 @@
 package codes.shiftmc.economy.language;
 
+import codes.shiftmc.economy.configuration.SettingsSource;
 import lombok.extern.slf4j.Slf4j;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
@@ -22,7 +23,7 @@ import java.util.regex.Pattern;
 
 @Slf4j
 public final class LanguageManager {
-    public static final String DEFAULT_LANGUAGE = "en-US";
+    public static String DEFAULT_LANGUAGE = "en-US";
     private static LanguageManager instance;
     private final JavaPlugin plugin;
 
@@ -37,8 +38,9 @@ public final class LanguageManager {
      *
      * @param plugin The main plugin instance.
      */
-    private LanguageManager(@NotNull JavaPlugin plugin) {
+    private LanguageManager(@NotNull JavaPlugin plugin, @NotNull String defaultLanguage) {
         this.plugin = plugin;
+        DEFAULT_LANGUAGE = defaultLanguage;
         var languages = new File(plugin.getDataFolder() + "/languages");
 
         saveDefaultLanguages(languages);
@@ -48,7 +50,7 @@ public final class LanguageManager {
     }
 
     /**
-     * Retrieves the current instance of the LanguageManager, if it has been initialized.
+     * Retrieves the current instance of the LanguageManager if it has been initialized.
      *
      * @return the existing LanguageManager instance, or null if it has not been initialized
      */
@@ -65,32 +67,33 @@ public final class LanguageManager {
      * @return the initialized LanguageManager instance, guaranteed to be non-null
      */
     @NotNull
-    public static LanguageManager instance(@NotNull JavaPlugin plugin) {
+    public static LanguageManager instance(@NotNull JavaPlugin plugin, @NotNull SettingsSource settingsSource) {
         if (instance == null) {
-            instance = new LanguageManager(plugin);
+            instance = new LanguageManager(plugin, settingsSource.defaultLanguage());
         }
         return instance;
     }
-    
+
     /**
-    * Reloads the language files and reinitializes the LanguageManager instance.
-    * This method clears the existing data and loads fresh data from the language files,
-    * effectively reloading the language resources in case any updates were made to them.
-    * <p>
-    * This is achieved by reinitializing the `LanguageManager` with the same plugin instance,
-    * which causes it to re-execute the constructor, loading the language files again.
-    *
-    * @return A instance of itself
-    */
-    public LanguageManager reload() {
-        instance = new LanguageManager(plugin);
+     * Reloads the language files and reinitializes the LanguageManager instance.
+     * This method clears the existing data and loads fresh data from the language files,
+     * effectively reloading the language resources in case any updates were made to them.
+     * <p>
+     * This is achieved by reinitializing the `LanguageManager` with the same plugin instance,
+     * which causes it to re-execute the constructor, loading the language files again.
+     *
+     * @param settingsSource The place to get the Default Language.
+     * @return An instance of itself
+     */
+    public LanguageManager reload(SettingsSource settingsSource) {
+        instance = new LanguageManager(plugin, settingsSource.defaultLanguage());
         return instance;
     }
 
     /**
      * Saves default language files from resources to the languages folder.
      *
-     * @param languagesFolder The languages directory.
+     * @param languagesFolder The languages' directory.
      */
     private void saveDefaultLanguages(@NotNull File languagesFolder) {
         String[] defaultLangs = {"en-US", "pt-BR"};

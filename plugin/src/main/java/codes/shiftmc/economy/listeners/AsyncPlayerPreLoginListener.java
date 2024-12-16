@@ -4,6 +4,7 @@ import codes.shiftmc.common.messaging.MessagingManager;
 import codes.shiftmc.common.messaging.packet.SendOnlinePacket;
 import codes.shiftmc.common.model.UserData;
 import codes.shiftmc.common.service.UserService;
+import codes.shiftmc.economy.configuration.SettingsSource;
 import lombok.AllArgsConstructor;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -19,6 +20,7 @@ public class AsyncPlayerPreLoginListener implements Listener {
 
     private final UserService userService;
     private final MessagingManager messagingManager;
+    private final SettingsSource settingsSource;
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
     public void onPlayerHandshake(AsyncPlayerPreLoginEvent event) {
@@ -28,7 +30,7 @@ public class AsyncPlayerPreLoginListener implements Listener {
         userService.save(new UserData(
                 uuid,
                 name,
-                0.0
+                settingsSource.startMoney()
         )).subscribe();
     }
 
