@@ -1,23 +1,35 @@
-# ShiftEconomy | Redis MultiServer Support v1.0
+<!--suppress ALL -->
+<p align="center">
+    <img src="https://3s6cswpu71.ufs.sh/f/37o8Wzy4EnVtBTdQ7B4O4eC9vYLzl5ZaDdgGuJnR2rASfPws" alt="ShiftEconomy" />
+    <br/>
+    <b>
+        <a href="void()/">BuiltByBit</a>
+    </b> —
+    <b>
+        <a href="http://github.com/ShiftSad/ShiftEconomy/issues">Issues</a>
+    </b>
+</p>
+<br/>
+
+---
 
 ### Overview
 **ShiftEconomy** is a modern, efficient, and asynchronous economy plugin for Minecraft servers, designed for multi-server setups using Redis. Supporting Minecraft versions **1.13 to 1.21.4**, including **Paper** and **Folia**, ShiftEconomy provides seamless integration and excellent performance across multiple servers.
 
-![Logo](https://3s6cswpu71.ufs.sh/f/37o8Wzy4EnVtsOPZjvMDpbg0qHCjYwSdXmPnTtZliJO17xa3)
-
 ---
 
 ### Features
-- **MultiServer Support:** Built on Redis for real-time synchronization across servers.
-- **Efficient Asynchronous Design:** Ensures minimal performance impact while handling complex operations.
-- **Broad Compatibility:** Fully compatible with Paper and Folia for Minecraft versions 1.13 through 1.21.4.
-- **Multi-Language Support:** Easily localized for players around the world.
+- ⭐ **MultiServer Support:** Built on Redis for real-time synchronization across servers.
+- ⭐ **Efficient Asynchronous Design:** Ensures minimal performance impact while handling complex operations.
+- ⭐ **Broad Compatibility:** Fully compatible with Paper and Folia for Minecraft versions 1.13 through 1.21.4.
+- ⭐ **Multi-Language Support:** Easily localized for players around the world.
 
 ---
 
 ### Demo
-Check out ShiftEconomy in action:
-[![Demo Video](https://img.youtube.com/vi/RDj0XsoSp5o/0.jpg)](https://youtu.be/RDj0XsoSp5o)
+<div align="center">
+    <iframe width="560" height="315" src="https://www.youtube.com/embed/RDj0XsoSp5o" frameborder="0" allowfullscreen></iframe>
+</div>
 
 ---
 
@@ -32,3 +44,4 @@ Check out ShiftEconomy in action:
 
 ### License
 This project is licensed under the [Apache License](https://github.com/ShiftSad/ShiftEconomy/blob/master/LICENSE).
+
