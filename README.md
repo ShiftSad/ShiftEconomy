@@ -27,9 +27,7 @@
 ---
 
 ### Demo
-<div align="center">
-    <iframe width="560" height="315" src="https://www.youtube.com/embed/RDj0XsoSp5o" frameborder="0" allowfullscreen></iframe>
-</div>
+[![Demo Video](https://img.youtube.com/vi/RDj0XsoSp5o/maxresdefault.jpg)](https://youtu.be/RDj0XsoSp5o)
 
 ---
 
