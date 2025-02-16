@@ -9,7 +9,7 @@
         <a href="http://github.com/ShiftSad/ShiftEconomy/issues">Issues</a>
     </b>
 </p>
-<br/>
+<br/> 
 
 ---
 
